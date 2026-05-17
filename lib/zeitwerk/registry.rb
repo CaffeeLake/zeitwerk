@@ -2,10 +2,10 @@
 
 module Zeitwerk
   module Registry # :nodoc: all
-    require_relative "registry/autoloads"
-    require_relative "registry/explicit_namespaces"
-    require_relative "registry/inceptions"
-    require_relative "registry/loaders"
+    require_relative 'registry/autoloads'
+    require_relative 'registry/explicit_namespaces'
+    require_relative 'registry/inceptions'
+    require_relative 'registry/loaders'
 
     class << self
       # Keeps track of all loaders. Useful to broadcast messages and to prevent
@@ -54,8 +54,8 @@ module Zeitwerk
               # Conflicting directories are rare, optimize for the common case.
               next if !new_root_dir.start_with?(existing_root_dir) && !existing_root_dir.start_with?(new_root_dir)
 
-              new_root_dir_slash = new_root_dir + "/"
-              existing_root_dir_slash = existing_root_dir + "/"
+              new_root_dir_slash = new_root_dir + '/'
+              existing_root_dir_slash = existing_root_dir + '/'
               next if !new_root_dir_slash.start_with?(existing_root_dir_slash) && !existing_root_dir_slash.start_with?(new_root_dir_slash)
 
               next if loader.__ignores?(existing_root_dir)

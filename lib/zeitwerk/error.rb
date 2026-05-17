@@ -17,7 +17,7 @@ module Zeitwerk
   class SetupRequired < Error
     #: () -> void
     def initialize
-      super("please, finish your configuration and call Zeitwerk::Loader#setup once all is ready")
+      super('please, finish your configuration and call Zeitwerk::Loader#setup once all is ready')
     end
   end
 

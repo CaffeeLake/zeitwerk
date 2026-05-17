@@ -7,7 +7,7 @@ It is very important that all the source code uses systematically the following 
 ### Variables for constants
 
 * `cname`: A constant name, for example `:User`. Must be a symbol.
-* `cpath`: A constant path, for example `"User"` or `"Hotel::Pricing"`. Must be a string.
+* `cpath`: A constant path, for example `'User'` or `'Hotel::Pricing'`. Must be a string.
 * `cref`: An instance of `Zeitwerk::Cref`.
 
 ### Variables for paths

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require "monitor"
-require "set"
+require 'monitor'
+require 'set'
 
 module Zeitwerk
   class Loader
-    require_relative "loader/helpers"
-    require_relative "loader/callbacks"
-    require_relative "loader/config"
-    require_relative "loader/eager_load"
-    require_relative "loader/file_system"
+    require_relative 'loader/helpers'
+    require_relative 'loader/callbacks'
+    require_relative 'loader/config'
+    require_relative 'loader/eager_load'
+    require_relative 'loader/file_system'
 
     extend Internal
 
@@ -22,8 +22,8 @@ module Zeitwerk
     # Maps absolute paths for which an autoload has been set ---and not
     # executed--- to their corresponding Zeitwerk::Cref object.
     #
-    #   "/Users/fxn/blog/app/models/user.rb"          => #<Zeitwerk::Cref:... @mod=Object, @cname=:User, ...>,
-    #   "/Users/fxn/blog/app/models/hotel/pricing.rb" => #<Zeitwerk::Cref:... @mod=Hotel, @cname=:Pricing, ...>,
+    #   '/Users/fxn/blog/app/models/user.rb'          => #<Zeitwerk::Cref:... @mod=Object, @cname=:User, ...>,
+    #   '/Users/fxn/blog/app/models/hotel/pricing.rb' => #<Zeitwerk::Cref:... @mod=Hotel, @cname=:Pricing, ...>,
     #   ...
     #
     #: Hash[String, Zeitwerk::Cref]
@@ -262,14 +262,14 @@ module Zeitwerk
         while (dir, cpath = queue.shift)
           result[dir] = cpath
 
-          prefix = cpath == "Object" ? "" : cpath + "::"
+          prefix = cpath == 'Object' ? '' : cpath + '::'
 
           @fs.ls(dir, collapse: false) do |basename, abspath, ftype|
             if ftype == :file
               if basename == @nsfile
                 result[abspath] = cpath
               else
-                basename.delete_suffix!(".rb")
+                basename.delete_suffix!('.rb')
                 result[abspath] = "#{prefix}#{cname_for(basename, abspath)}"
               end
             elsif collapse?(abspath)
@@ -301,7 +301,7 @@ module Zeitwerk
         basename = File.basename(abspath)
         return if @fs.hidden?(basename)
 
-        paths << [basename.delete_suffix(".rb"), abspath] unless basename == @nsfile
+        paths << [basename.delete_suffix('.rb'), abspath] unless basename == @nsfile
         walk_up_from = File.dirname(abspath)
       else
         walk_up_from = abspath
@@ -327,9 +327,9 @@ module Zeitwerk
         cnames = paths.reverse_each.map { cname_for(_1, _2) }
 
         if root_namespace == Object
-          cnames.join("::")
+          cnames.join('::')
         else
-          "#{real_mod_name(root_namespace)}::#{cnames.join("::")}"
+          "#{real_mod_name(root_namespace)}::#{cnames.join('::')}"
         end
       end
     end
@@ -396,10 +396,10 @@ module Zeitwerk
 
       # This is a shortcut for
       #
-      #   require "zeitwerk"
+      #   require 'zeitwerk'
       #
       #   loader = Zeitwerk::Loader.new
-      #   loader.tag = File.basename(__FILE__, ".rb")
+      #   loader.tag = File.basename(__FILE__, '.rb')
       #   loader.inflector = Zeitwerk::GemInflector.new(__FILE__)
       #   loader.push_dir(__dir__)
       #
@@ -417,10 +417,10 @@ module Zeitwerk
 
       # This is a shortcut for
       #
-      #   require "zeitwerk"
+      #   require 'zeitwerk'
       #
       #   loader = Zeitwerk::Loader.new
-      #   loader.tag = namespace.name + "-" + File.basename(__FILE__, ".rb")
+      #   loader.tag = namespace.name + '-' + File.basename(__FILE__, '.rb')
       #   loader.inflector = Zeitwerk::GemInflector.new(__FILE__)
       #   loader.push_dir(__dir__, namespace: namespace)
       #
@@ -437,7 +437,7 @@ module Zeitwerk
         end
 
         unless real_mod_name(namespace)
-          raise Zeitwerk::Error, "extending anonymous namespaces is unsupported"
+          raise Zeitwerk::Error, 'extending anonymous namespaces is unsupported'
         end
 
         called_from = caller_locations(1, 1).first.path
@@ -498,14 +498,14 @@ module Zeitwerk
           if basename == @nsfile
             if external
               cpath = real_mod_name(mod)
-              location = Object.const_source_location(cpath)&.join(":")
+              location = Object.const_source_location(cpath)&.join(':')
               location = nil if location&.empty?
               raise Zeitwerk::ConflictingNamespaceDefinitionError.new(cpath, location: location, conflicting_file: abspath)
             end
             next # Pass if this is a managed namespace, the nsfile was already probed when visiting the parent directory.
           end
 
-          basename.delete_suffix!(".rb")
+          basename.delete_suffix!('.rb')
           cref = Cref.new(mod, cname_for(basename, abspath))
           visit_file(cref, abspath)
         else
@@ -646,7 +646,7 @@ module Zeitwerk
     #: (String) -> void
     private def raise_if_conflicting_root_dir(root_dir)
       if loader = Registry.conflicting_root_dir?(self, root_dir)
-        require "pp" # Needed to have pretty_inspect available.
+        require 'pp' # Needed to have pretty_inspect available.
         raise Error,
           "loader\n\n#{pretty_inspect}\n\nwants to manage directory #{root_dir}," \
           " which is already managed by\n\n#{loader.pretty_inspect}\n"

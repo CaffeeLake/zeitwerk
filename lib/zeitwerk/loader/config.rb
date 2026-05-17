@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "set"
-require "securerandom"
+require 'set'
+require 'securerandom'
 
 module Zeitwerk::Loader::Config
   extend Zeitwerk::Internal
@@ -15,8 +15,8 @@ module Zeitwerk::Loader::Config
 
   # Absolute paths of the root directories, mapped to their respective root namespaces:
   #
-  #   "/Users/fxn/blog/app/channels" => Object,
-  #   "/Users/fxn/blog/app/adapters" => ActiveJob::QueueAdapters,
+  #   '/Users/fxn/blog/app/channels' => Object,
+  #   '/Users/fxn/blog/app/adapters' => ActiveJob::QueueAdapters,
   #   ...
   #
   # Stored in a hash to preserve order, easily handle duplicates, and have a
@@ -30,7 +30,7 @@ module Zeitwerk::Loader::Config
   internal :roots
 
   # Basename of files that define namespaces. For example, if `nsfile` is
-  # "ns.rb", then `foo/ns.rb` defines the `Foo` namespace.
+  # 'ns.rb', then `foo/ns.rb` defines the `Foo` namespace.
   #
   #: String?
   attr_reader :nsfile
@@ -129,7 +129,7 @@ module Zeitwerk::Loader::Config
     end
 
     unless real_mod_name(namespace)
-      raise Zeitwerk::Error, "root namespaces cannot be anonymous"
+      raise Zeitwerk::Error, 'root namespaces cannot be anonymous'
     end
 
     abspath = File.expand_path(path)
@@ -161,10 +161,10 @@ module Zeitwerk::Loader::Config
   #: (String?) -> void ! TypeError, ArgumentError
   def nsfile=(nsfile)
     unless nsfile.nil?
-      raise TypeError,     "nsfiles must be strings"              unless nsfile.is_a?(String)
-      raise ArgumentError, "nsfiles must have .rb extension"      unless @fs.rb_extension?(nsfile)
-      raise ArgumentError, "nsfiles must be basenames, not paths" unless File.basename(nsfile) == nsfile
-      raise ArgumentError, "nsfiles cannot be hidden"             if @fs.hidden?(nsfile)
+      raise TypeError,     'nsfiles must be strings'              unless nsfile.is_a?(String)
+      raise ArgumentError, 'nsfiles must have .rb extension'      unless @fs.rb_extension?(nsfile)
+      raise ArgumentError, 'nsfiles must be basenames, not paths' unless File.basename(nsfile) == nsfile
+      raise ArgumentError, 'nsfiles cannot be hidden'             if @fs.hidden?(nsfile)
     end
 
     @nsfile = nsfile
@@ -205,7 +205,7 @@ module Zeitwerk::Loader::Config
       break if @reloading_enabled
 
       if @setup
-        raise Zeitwerk::Error, "cannot enable reloading after setup"
+        raise Zeitwerk::Error, 'cannot enable reloading after setup'
       else
         @reloading_enabled = true
       end
@@ -266,8 +266,8 @@ module Zeitwerk::Loader::Config
   # Supports multiple callbacks, and if there are many, they are executed in
   # the order in which they were defined.
   #
-  #   loader.on_load("SomeApiClient") do |klass, _abspath|
-  #     klass.endpoint = "https://api.dev"
+  #   loader.on_load('SomeApiClient') do |klass, _abspath|
+  #     klass.endpoint = 'https://api.dev'
   #   end
   #
   # Can also be configured for any constant loaded:
@@ -278,7 +278,7 @@ module Zeitwerk::Loader::Config
   #
   #: (String?) { (top, String) -> void } -> void ! TypeError
   def on_load(cpath = :ANY, &block)
-    raise TypeError, "on_load only accepts strings" unless cpath.is_a?(String) || cpath == :ANY
+    raise TypeError, 'on_load only accepts strings' unless cpath.is_a?(String) || cpath == :ANY
 
     mutex.synchronize do
       (on_load_callbacks[cpath] ||= []) << block
@@ -289,7 +289,7 @@ module Zeitwerk::Loader::Config
   # Supports multiple callbacks, and if there are many, they are executed in the
   # order in which they were defined.
   #
-  #   loader.on_unload("Country") do |klass, _abspath|
+  #   loader.on_unload('Country') do |klass, _abspath|
   #     klass.clear_cache
   #   end
   #
@@ -301,7 +301,7 @@ module Zeitwerk::Loader::Config
   #
   #: (String?) { (top, String) -> void } -> void ! TypeError
   def on_unload(cpath = :ANY, &block)
-    raise TypeError, "on_unload only accepts strings" unless cpath.is_a?(String) || cpath == :ANY
+    raise TypeError, 'on_unload only accepts strings' unless cpath.is_a?(String) || cpath == :ANY
 
     mutex.synchronize do
       (on_unload_callbacks[cpath] ||= []) << block

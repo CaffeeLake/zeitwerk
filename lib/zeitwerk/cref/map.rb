@@ -27,7 +27,7 @@
 # 1. We could also use a 1-level hash whose keys are constant paths. In the
 #    example above it would be:
 #
-#      { "M::X" => 0, "M::Y" => 1, "N::Z" => 2 }
+#      { 'M::X' => 0, 'M::Y' => 1, 'N::Z' => 2 }
 #
 #    The gem used this approach for several years.
 #

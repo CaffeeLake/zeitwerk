@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class LoaderTest < Minitest::Test
-  TMP_DIR = File.expand_path("../tmp", __dir__)
+  TMP_DIR = File.expand_path('../tmp', __dir__)
 
   attr_reader :loader
 
@@ -81,20 +81,20 @@ class LoaderTest < Minitest::Test
   def with_setup(files = [], dirs: nil, namespace: Object, load_path: nil, rm: true)
     with_files(files, rm: rm) do |cwd|
       dirs ||= files.map do |file, _contents|
-        file =~ %r{\A(rd\d?)/} ? $1 : "."
+        file =~ %r{\A(rd\d?)/} ? $1 : '.'
       end.uniq
       dirs.each { |dir| loader.push_dir(dir, namespace: namespace) }
 
       files.each do |file, _contents|
-        if File.basename(file) == "ignored.rb"
+        if File.basename(file) == 'ignored.rb'
           loader.ignore(file)
         elsif file =~ %r{\A(ignored|.+/ignored)/}
           loader.ignore($1)
         end
 
-        segments = file.split("/")
+        segments = file.split('/')
         collapsed = segments.each_index.filter_map do |i|
-          segments[0..i].join("/") if segments[i] == "collapsed"
+          segments[0..i].join('/') if segments[i] == 'collapsed'
         end
         loader.collapse(collapsed) unless collapsed.empty?
       end

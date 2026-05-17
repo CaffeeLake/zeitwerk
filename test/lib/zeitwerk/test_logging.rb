@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require 'test_helper'
 
 class TestLogging < LoaderTest
   def setup
@@ -27,14 +27,14 @@ class TestLogging < LoaderTest
     end
   end
 
-  test "log! just prints to $stdout" do
+  test 'log! just prints to $stdout' do
     loader.logger = nil # make sure we are setting something
     loader.log!
-    message = "test log!"
+    message = 'test log!'
     assert_logged(/#{message}\n/) { loader.__log { message } }
   end
 
-  test "accepts objects that respond to :call" do
+  test 'accepts objects that respond to :call' do
     logger = Object.new
     def logger.call(message)
       print message
@@ -42,11 +42,11 @@ class TestLogging < LoaderTest
 
     loader.logger = logger
 
-    message = "test message :call"
+    message = 'test message :call'
     assert_logged(message) { loader.__log { message } }
   end
 
-  test "accepts objects that respond to :debug" do
+  test 'accepts objects that respond to :debug' do
     logger = Object.new
     def logger.debug(message)
       print message
@@ -54,23 +54,23 @@ class TestLogging < LoaderTest
 
     loader.logger = logger
 
-    message = "test message :debug"
+    message = 'test message :debug'
     assert_logged(message) { loader.__log { message } }
   end
 
-  test "new loaders get assigned the default global logger" do
+  test 'new loaders get assigned the default global logger' do
     assert_nil Zeitwerk::Loader.new.logger
 
     Zeitwerk::Loader.default_logger = Object.new
     assert_same Zeitwerk::Loader.default_logger, Zeitwerk::Loader.new.logger
   end
 
-  test "logs loaded files" do
-    files = [["x.rb", "X = true"]]
+  test 'logs loaded files' do
+    files = [['x.rb', 'X = true']]
     with_files(files) do
-      with_load_path(".") do
-        assert_logged(/constant X loaded from file #{File.expand_path("x.rb")}/) do
-          loader.push_dir(".")
+      with_load_path('.') do
+        assert_logged(/constant X loaded from file #{File.expand_path('x.rb')}/) do
+          loader.push_dir('.')
           loader.setup
 
           assert X
@@ -79,26 +79,26 @@ class TestLogging < LoaderTest
     end
   end
 
-  test "logs required managed files" do
-    files = [["x.rb", "X = true"]]
+  test 'logs required managed files' do
+    files = [['x.rb', 'X = true']]
     with_files(files) do
-      with_load_path(".") do
-        assert_logged(/constant X loaded from file #{File.expand_path("x.rb")}/) do
-          loader.push_dir(".")
+      with_load_path('.') do
+        assert_logged(/constant X loaded from file #{File.expand_path('x.rb')}/) do
+          loader.push_dir('.')
           loader.setup
 
-          assert require "x"
+          assert require 'x'
         end
       end
     end
   end
 
-  test "logs autovivified modules" do
-    files = [["admin/user.rb", "class Admin::User; end"]]
+  test 'logs autovivified modules' do
+    files = [['admin/user.rb', 'class Admin::User; end']]
     with_files(files) do
-      with_load_path(".") do
-        assert_logged(/module Admin autovivified from directory #{File.expand_path("admin")}/) do
-          loader.push_dir(".")
+      with_load_path('.') do
+        assert_logged(/module Admin autovivified from directory #{File.expand_path('admin')}/) do
+          loader.push_dir('.')
           loader.setup
 
           assert Admin
@@ -107,69 +107,69 @@ class TestLogging < LoaderTest
     end
   end
 
-  test "logs implicit to explicit promotions" do
+  test 'logs implicit to explicit promotions' do
     # We use two root directories to make sure the loader visits the implicit
     # a/m first, and the explicit b/m.rb after it.
     files = [
-      ["a/m/x.rb", "M::X = true"],
-      ["b/m.rb", "module M; end"]
+      ['a/m/x.rb', 'M::X = true'],
+      ['b/m.rb', 'module M; end']
     ]
     with_files(files) do
-      loader.push_dir("a")
-      loader.push_dir("b")
-      assert_logged(/earlier autoload for M discarded, it is actually an explicit namespace defined in #{File.expand_path("b/m.rb")}/) do
+      loader.push_dir('a')
+      loader.push_dir('b')
+      assert_logged(/earlier autoload for M discarded, it is actually an explicit namespace defined in #{File.expand_path('b/m.rb')}/) do
         loader.setup
       end
     end
   end
 
-  test "logs autoload configured for files" do
-    files = [["x.rb", "X = true"]]
+  test 'logs autoload configured for files' do
+    files = [['x.rb', 'X = true']]
     with_files(files) do
-      assert_logged("autoload set for X, to be loaded from #{File.expand_path("x.rb")}") do
-        loader.push_dir(".")
+      assert_logged("autoload set for X, to be loaded from #{File.expand_path('x.rb')}") do
+        loader.push_dir('.')
         loader.setup
       end
     end
   end
 
-  test "logs failed autoloads, provided the require call succeeded" do
-    files = [["x.rb", ""]]
+  test 'logs failed autoloads, provided the require call succeeded' do
+    files = [['x.rb', '']]
     with_files(files) do
-      assert_logged(/expected file #{File.expand_path("x.rb")} to define constant X, but didn't/) do
-        loader.push_dir(".")
+      assert_logged(/expected file #{File.expand_path('x.rb')} to define constant X, but didn't/) do
+        loader.push_dir('.')
         loader.setup
         assert_raises(Zeitwerk::NameError) { X }
       end
     end
   end
 
-  test "logs autoload configured for directories" do
-    files = [["admin/user.rb", "class Admin::User; end"]]
+  test 'logs autoload configured for directories' do
+    files = [['admin/user.rb', 'class Admin::User; end']]
     with_files(files) do
-      assert_logged("autoload set for Admin, to be autovivified from #{File.expand_path("admin")}") do
-        loader.push_dir(".")
+      assert_logged("autoload set for Admin, to be autovivified from #{File.expand_path('admin')}") do
+        loader.push_dir('.')
         loader.setup
       end
     end
   end
 
-  test "logs unloads for autoloads" do
-    files = [["x.rb", "X = true"]]
+  test 'logs unloads for autoloads' do
+    files = [['x.rb', 'X = true']]
     with_files(files) do
       assert_logged(/autoload for X removed/) do
-        loader.push_dir(".")
+        loader.push_dir('.')
         loader.setup
         loader.reload
       end
     end
   end
 
-  test "logs unloads for loaded objects" do
-    files = [["x.rb", "X = true"]]
+  test 'logs unloads for loaded objects' do
+    files = [['x.rb', 'X = true']]
     with_files(files) do
       assert_logged(/X unloaded/) do
-        loader.push_dir(".")
+        loader.push_dir('.')
         loader.setup
         assert X
         loader.reload
@@ -177,51 +177,51 @@ class TestLogging < LoaderTest
     end
   end
 
-  test "logs files shadowed by already defined constants" do
+  test 'logs files shadowed by already defined constants' do
     on_teardown { remove_const :X }
 
     ::X = 1; location = "#{__FILE__}:#{__LINE__}"
 
-    files = [["x.rb", "X = 1"]]
+    files = [['x.rb', 'X = 1']]
     with_files(files) do
-      loader.push_dir(".")
+      loader.push_dir('.')
       assert_logged(%r(file .*?/x\.rb is ignored because X is already defined in #{location})) do
         loader.setup
       end
     end
   end
 
-  test "logs directories being ignored because they have no Ruby files" do
-    files = [["tasks/foo.rake", ""]]
+  test 'logs directories being ignored because they have no Ruby files' do
+    files = [['tasks/foo.rake', '']]
     with_files(files) do
       assert_logged(%r{directory .*?/tasks is ignored because it has no Ruby files}) do
-        loader.push_dir(".")
+        loader.push_dir('.')
         loader.setup
       end
     end
   end
 
-  test "logs when eager loading a directory starts" do
+  test 'logs when eager loading a directory starts' do
     with_files do |cwd|
       assert_logged(%r(eager load directory #{cwd} start)) do
-        loader.push_dir(".")
+        loader.push_dir('.')
         loader.setup
-        loader.eager_load_dir(".")
+        loader.eager_load_dir('.')
       end
     end
   end
 
-  test "logs when eager loading a directory ends" do
+  test 'logs when eager loading a directory ends' do
     with_files do |cwd|
       assert_logged(%r(eager load directory #{cwd} end)) do
-        loader.push_dir(".")
+        loader.push_dir('.')
         loader.setup
-        loader.eager_load_dir(".")
+        loader.eager_load_dir('.')
       end
     end
   end
 
-  test "logs when eager loading starts" do
+  test 'logs when eager loading starts' do
     with_setup do
       assert_logged(/eager load start/) do
         loader.eager_load
@@ -229,7 +229,7 @@ class TestLogging < LoaderTest
     end
   end
 
-  test "logs when eager loading ends" do
+  test 'logs when eager loading ends' do
     with_setup do
       assert_logged(/eager load end/) do
         loader.eager_load

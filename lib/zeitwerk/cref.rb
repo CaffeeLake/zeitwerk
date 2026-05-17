@@ -11,7 +11,7 @@
 #
 # The constant may or may not exist in `mod`.
 class Zeitwerk::Cref
-  require_relative "cref/map"
+  require_relative 'cref/map'
 
   include Zeitwerk::RealModName
 
@@ -70,7 +70,7 @@ class Zeitwerk::Cref
   #: () -> String?
   def location
     if (location = @mod.const_source_location(@cname)) && !location.empty?
-      location.join(":")
+      location.join(':')
     end
   end
 end

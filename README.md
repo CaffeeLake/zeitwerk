@@ -100,7 +100,7 @@ Main interface for gems:
 ```ruby
 # lib/my_gem.rb (main file)
 
-require "zeitwerk"
+require 'zeitwerk'
 loader = Zeitwerk::Loader.for_gem
 loader.setup # ready!
 
@@ -183,7 +183,7 @@ end
 The first example needs a custom [inflection](#inflection) rule:
 
 ```ruby
-loader.inflector.inflect("max_retries" => "MAX_RETRIES")
+loader.inflector.inflect('max_retries' => 'MAX_RETRIES')
 ```
 
 Otherwise, Zeitwerk would expect the file to define `MaxRetries`.
@@ -222,8 +222,8 @@ Although `Object` is the most common root namespace, you have the flexibility to
 For example, given:
 
 ```ruby
-require "active_job"
-require "active_job/queue_adapters"
+require 'active_job'
+require 'active_job/queue_adapters'
 loader.push_dir("#{__dir__}/adapters", namespace: ActiveJob::QueueAdapters)
 ```
 
@@ -428,9 +428,9 @@ Conceptually, `for_gem` translates to:
 ```ruby
 # lib/my_gem.rb
 
-require "zeitwerk"
+require 'zeitwerk'
 loader = Zeitwerk::Loader.new
-loader.tag = File.basename(__FILE__, ".rb")
+loader.tag = File.basename(__FILE__, '.rb')
 loader.inflector = Zeitwerk::GemInflector.new(__FILE__)
 loader.push_dir(File.dirname(__FILE__))
 ```
@@ -440,7 +440,7 @@ If the main module references project constants at the top-level, Zeitwerk has t
 ```ruby
 # lib/my_gem.rb (main file)
 
-require "zeitwerk"
+require 'zeitwerk'
 loader = Zeitwerk::Loader.for_gem
 loader.setup
 
@@ -486,7 +486,7 @@ Let's suppose you are writing a gem to extend `Net::HTTP` with some niche featur
 The top-level file mentioned in the last point is optional. In particular, from
 
 ```ruby
-gem "net-http-niche_feature"
+gem 'net-http-niche_feature'
 ```
 
 if the hyphenated file does not exist, Bundler notes the conventional hyphenated pattern and issues a `require` for `net/http/niche_feature`.
@@ -499,13 +499,13 @@ The structure of the gem would be like this:
 # lib/net-http-niche_feature.rb (optional)
 
 # For technical reasons, this cannot be require_relative.
-require "net/http/niche_feature"
+require 'net/http/niche_feature'
 
 
 # lib/net/http/niche_feature.rb
 
-require "net/http"
-require "zeitwerk"
+require 'net/http'
+require 'zeitwerk'
 
 loader = Zeitwerk::Loader.for_gem_extension(Net::HTTP)
 loader.setup
@@ -520,7 +520,7 @@ end
 # lib/net/http/niche_feature/version.rb
 
 module Net::HTTP::NicheFeature
-  VERSION = "1.0.0"
+  VERSION = '1.0.0'
 end
 ```
 
@@ -542,7 +542,7 @@ Let's revisit the example above:
 ```ruby
 # lib/my_gem.rb (main file)
 
-require "zeitwerk"
+require 'zeitwerk'
 loader = Zeitwerk::Loader.for_gem
 loader.setup
 
@@ -551,7 +551,7 @@ module MyGem
 end
 ```
 
-That works, and there is no `require "my_gem/my_logger"`. When `(*)` is reached, Zeitwerk seamlessly autoloads `MyGem::MyLogger`.
+That works, and there is no `require 'my_gem/my_logger'`. When `(*)` is reached, Zeitwerk seamlessly autoloads `MyGem::MyLogger`.
 
 If autoloading a file does not define the expected class or module, Zeitwerk raises `Zeitwerk::NameError`, which is a subclass of `NameError`.
 
@@ -738,7 +738,7 @@ In order to reload safely, no other thread can be autoloading or reloading concu
 For example, a web framework that serves each request in its own thread and has reloading enabled could create a read-write lock on boot like this:
 
 ```ruby
-require "concurrent/atomic/read_write_lock"
+require 'concurrent/atomic/read_write_lock'
 
 MyFramework::RELOAD_RW_LOCK = Concurrent::ReadWriteLock.new
 ```
@@ -783,22 +783,22 @@ The camelize logic can be overridden easily for individual basenames:
 
 ```ruby
 loader.inflector.inflect(
-  "html_parser"   => "HTMLParser",
-  "mysql_adapter" => "MySQLAdapter"
+  'html_parser'   => 'HTMLParser',
+  'mysql_adapter' => 'MySQLAdapter'
 )
 ```
 
 The `inflect` method can be invoked several times if you prefer this other style:
 
 ```ruby
-loader.inflector.inflect "html_parser" => "HTMLParser"
-loader.inflector.inflect "mysql_adapter" => "MySQLAdapter"
+loader.inflector.inflect 'html_parser' => 'HTMLParser'
+loader.inflector.inflect 'mysql_adapter' => 'MySQLAdapter'
 ```
 
 Overrides have to match exactly directory or file (without extension) _basenames_. For example, if you configure
 
 ```ruby
-loader.inflector.inflect("xml" => "XML")
+loader.inflector.inflect('xml' => 'XML')
 ```
 
 then the following constants are expected:
@@ -813,8 +813,8 @@ As you see, any directory whose basename is exactly `xml`, and any file whose ba
 
 ```ruby
 loader.inflector.inflect(
-  "xml"        => "XML",
-  "xml_parser" => "XMLParser"
+  'xml'        => 'XML',
+  'xml_parser' => 'XMLParser'
 )
 ```
 
@@ -869,7 +869,7 @@ The inflectors that ship with Zeitwerk are deterministic and simple. But you can
 class MyInflector < Zeitwerk::Inflector
   def camelize(basename, abspath)
     if basename =~ /\Ahtml_(.*)/
-      "HTML" + super($1, abspath)
+      'HTML' + super($1, abspath)
     else
       super
     end
@@ -900,8 +900,8 @@ module MyGem
 end
 
 # lib/my_gem.rb
-require "zeitwerk"
-require_relative "my_gem/inflector"
+require 'zeitwerk'
+require_relative 'my_gem/inflector'
 
 loader = Zeitwerk::Loader.for_gem
 loader.inflector = MyGem::Inflector.new(__FILE__)
@@ -969,13 +969,13 @@ With `on_load`, it is easy to schedule code at boot time that initializes `endpo
 
 ```ruby
 # config/environments/development.rb
-loader.on_load("SomeApiClient") do |klass, _abspath|
-  klass.endpoint = "https://api.dev"
+loader.on_load('SomeApiClient') do |klass, _abspath|
+  klass.endpoint = 'https://api.dev'
 end
 
 # config/environments/production.rb
-loader.on_load("SomeApiClient") do |klass, _abspath|
-  klass.endpoint = "https://api.prod"
+loader.on_load('SomeApiClient') do |klass, _abspath|
+  klass.endpoint = 'https://api.prod'
 end
 ```
 
@@ -1019,7 +1019,7 @@ When reloading is enabled, you may occasionally need to execute something before
 For example, let's imagine that a `Country` class fetches a list of countries and caches them when it is loaded. You might want to clear that cache if unloaded:
 
 ```ruby
-loader.on_unload("Country") do |klass, _abspath|
+loader.on_unload('Country') do |klass, _abspath|
   klass.clear_cache
 end
 ```
@@ -1104,7 +1104,7 @@ Zeitwerk@9fa54b: autoload set for User, to be loaded from ...
 By default, a random tag like the one above is assigned, but you can change it:
 
 ```
-loader.tag = "grep_me"
+loader.tag = 'grep_me'
 ```
 
 The tag of a loader returned by `for_gem` is the basename of the root file without extension:
@@ -1160,7 +1160,7 @@ loader.setup
 Now, that file has to be loaded manually with `require` or `require_relative`:
 
 ```ruby
-require_relative "my_gem/core_ext/kernel"
+require_relative 'my_gem/core_ext/kernel'
 ```
 
 and you can do that anytime, before configuring the loader, or after configuring the loader, does not matter.
@@ -1174,7 +1174,7 @@ Let's imagine your project talks to databases, supports several, and has adapter
 
 ```ruby
 # my_gem/db_adapters/postgresql.rb
-require "pg"
+require 'pg'
 ```
 
 but you don't want your users to install them all, only the one they are going to use.
@@ -1212,7 +1212,7 @@ loader.setup
 In Ruby, if you have several files called `foo.rb` in different directories of `$LOAD_PATH` and execute
 
 ```ruby
-require "foo"
+require 'foo'
 ```
 
 the first one found gets loaded, and the rest are ignored.
@@ -1281,10 +1281,10 @@ In order to do so, you need to make sure those modules are loaded before calling
 
 ```ruby
 # Ensure these namespaces are reopened, not defined.
-require "active_job"
-require "active_job/queue_adapters"
+require 'active_job'
+require 'active_job/queue_adapters'
 
-require "zeitwerk"
+require 'zeitwerk'
 # By passing the flag, we acknowledge the extra directory lib/active_job
 # has to be managed by the loader and no warning has to be issued for it.
 loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
@@ -1303,17 +1303,17 @@ The method `Zeitwerk::Loader#dirs` returns an array with the absolute paths of t
 
 ```ruby
 loader = Zeitwerk::Loader.new
-loader.push_dir(Pathname.new("/foo"))
-loader.dirs # => ["/foo"]
+loader.push_dir(Pathname.new('/foo'))
+loader.dirs # => ['/foo']
 ```
 
 This method accepts an optional `namespaces` keyword argument. If truthy, the method returns a hash table instead. Keys are the absolute paths of the root directories as strings. Values are their corresponding namespaces, class or module objects:
 
 ```ruby
 loader = Zeitwerk::Loader.new
-loader.push_dir(Pathname.new("/foo"))
-loader.push_dir(Pathname.new("/bar"), namespace: Bar)
-loader.dirs(namespaces: true) # => { "/foo" => Object, "/bar" => Bar }
+loader.push_dir(Pathname.new('/foo'))
+loader.push_dir(Pathname.new('/bar'), namespace: Bar)
+loader.dirs(namespaces: true) # => { '/foo' => Object, '/bar' => Bar }
 ```
 
 By default, ignored root directories are filtered out. If you want them included, please pass `ignored: true`.
@@ -1340,18 +1340,18 @@ Given a path as a string or `Pathname` object, `Zeitwerk::Loader#cpath_expected_
 Some examples, assuming that `app/models` is a root directory:
 
 ```ruby
-loader.cpath_expected_at("app/models")                  # => "Object"
-loader.cpath_expected_at("app/models/user.rb")          # => "User"
-loader.cpath_expected_at("app/models/hotel")            # => "Hotel"
-loader.cpath_expected_at("app/models/hotel/billing.rb") # => "Hotel::Billing"
+loader.cpath_expected_at('app/models')                  # => 'Object'
+loader.cpath_expected_at('app/models/user.rb')          # => 'User'
+loader.cpath_expected_at('app/models/hotel')            # => 'Hotel'
+loader.cpath_expected_at('app/models/hotel/billing.rb') # => 'Hotel::Billing'
 ```
 
 If `collapsed` is a collapsed directory:
 
 ```ruby
-loader.cpath_expected_at("a/b/collapsed/c") # => "A::B::C"
-loader.cpath_expected_at("a/b/collapsed")   # => "A::B", edge case
-loader.cpath_expected_at("a/b")             # => "A::B"
+loader.cpath_expected_at('a/b/collapsed/c') # => 'A::B::C'
+loader.cpath_expected_at('a/b/collapsed')   # => 'A::B', edge case
+loader.cpath_expected_at('a/b')             # => 'A::B'
 ```
 
 If the argument corresponds to an [ignored file or directory](#ignoring-parts-of-the-project), the method returns `nil`. Same if the argument is not managed by the loader.
@@ -1359,13 +1359,13 @@ If the argument corresponds to an [ignored file or directory](#ignoring-parts-of
 `Zeitwerk::Error` is raised if the given path does not exist:
 
 ```ruby
-loader.cpath_expected_at("non_existing_file.rb") # => Zeitwerk::Error
+loader.cpath_expected_at('non_existing_file.rb') # => Zeitwerk::Error
 ```
 
 `Zeitwerk::NameError` is raised if a constant path cannot be derived from it:
 
 ```ruby
-loader.cpath_expected_at("8.rb") # => Zeitwerk::NameError
+loader.cpath_expected_at('8.rb') # => Zeitwerk::NameError
 ```
 
 This method does not parse file contents and does not guarantee files define the returned constant path.
@@ -1398,15 +1398,15 @@ lib/tasks/my_gem.rake
 
 ```ruby
 {
-  "/.../lib"                           => "Object",
-  "/.../lib/my_gem.rb"                 => "MyGem",
-  "/.../lib/my_gem"                    => "MyGem",
-  "/.../lib/my_gem/version.rb"         => "MyGem::VERSION",
-  "/.../lib/my_gem/drivers"            => "MyGem::Drivers",
-  "/.../lib/my_gem/drivers/unix.rb"    => "MyGem::Drivers::Unix",
-  "/.../lib/my_gem/drivers/windows.rb" => "MyGem::Drivers::Windows",
-  "/.../lib/my_gem/collapsed"          => "MyGem",
-  "/.../lib/my_gem/collapsed/foo.rb"   => "MyGem::Foo"
+  '/.../lib'                           => 'Object',
+  '/.../lib/my_gem.rb'                 => 'MyGem',
+  '/.../lib/my_gem'                    => 'MyGem',
+  '/.../lib/my_gem/version.rb'         => 'MyGem::VERSION',
+  '/.../lib/my_gem/drivers'            => 'MyGem::Drivers',
+  '/.../lib/my_gem/drivers/unix.rb'    => 'MyGem::Drivers::Unix',
+  '/.../lib/my_gem/drivers/windows.rb' => 'MyGem::Drivers::Windows',
+  '/.../lib/my_gem/collapsed'          => 'MyGem',
+  '/.../lib/my_gem/collapsed/foo.rb'   => 'MyGem::Foo'
 }
 ```
 
@@ -1491,8 +1491,8 @@ Furthermore, the project has a development dependency on [`minitest-focus`](http
 
 ```ruby
 focus
-test "capitalizes the first letter" do
-  assert_equal "User", camelize("user")
+test 'capitalizes the first letter' do
+  assert_equal 'User', camelize('user')
 end
 ```
 
@@ -1506,7 +1506,7 @@ and run `bin/test`.
 
 Since `require` has global side-effects, and there is no static way to verify that you have issued the `require` calls for code that your file depends on, in practice it is very easy to forget some. That introduces bugs that depend on the load order.
 
-Also, if the project has namespaces, setting things up and getting client code to load things in a consistent way needs discipline. For example, `require "foo/bar"` may define `Foo`, instead of reopen it. That may be a broken window, giving place to superclass mismatches or partially-defined namespaces.
+Also, if the project has namespaces, setting things up and getting client code to load things in a consistent way needs discipline. For example, `require 'foo/bar'` may define `Foo`, instead of reopen it. That may be a broken window, giving place to superclass mismatches or partially-defined namespaces.
 
 With Zeitwerk, you just name things following conventions and done. Things are available everywhere, and descend is always orderly. Without effort and without broken windows.
 

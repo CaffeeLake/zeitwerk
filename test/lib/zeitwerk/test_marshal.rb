@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require 'test_helper'
 
 class TestMarshal < LoaderTest
-  test "Marshal.load autoloads a top-level class" do
-    files = [["c.rb", "class C; end"]]
+  test 'Marshal.load autoloads a top-level class' do
+    files = [['c.rb', 'class C; end']]
     with_setup(files) do
       str = Marshal.dump(C.new)
       loader.reload
@@ -12,8 +12,8 @@ class TestMarshal < LoaderTest
     end
   end
 
-  test "Marshal.load autoloads a namespaced class (implicit)" do
-    files = [["m/n/c.rb", "class M::N::C; end"]]
+  test 'Marshal.load autoloads a namespaced class (implicit)' do
+    files = [['m/n/c.rb', 'class M::N::C; end']]
     with_setup(files) do
       str = Marshal.dump(M::N::C.new)
       loader.reload
@@ -21,10 +21,10 @@ class TestMarshal < LoaderTest
     end
   end
 
-  test "Marshal.load autoloads a namespaced class (explicit)" do
+  test 'Marshal.load autoloads a namespaced class (explicit)' do
     files = [
-      ["m.rb", "module M; end"],
-      ["m/n/c.rb", "class M::N::C; end"]
+      ['m.rb', 'module M; end'],
+      ['m/n/c.rb', 'class M::N::C; end']
     ]
     with_setup(files) do
       str = Marshal.dump(M::N::C.new)
@@ -33,10 +33,10 @@ class TestMarshal < LoaderTest
     end
   end
 
-  test "Marshal.load autoloads several classes" do
+  test 'Marshal.load autoloads several classes' do
     files = [
-      ["c.rb", "class C; end"],
-      ["d.rb", "class D; end"]
+      ['c.rb', 'class C; end'],
+      ['d.rb', 'class D; end']
     ]
     with_setup(files) do
       str = Marshal.dump([C.new, D.new])

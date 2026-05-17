@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "test_helper"
-require "fileutils"
+require 'test_helper'
+require 'fileutils'
 
 class TestForGem < LoaderTest
-  MY_GEM = ["lib/my_gem.rb", <<~EOS]
+  MY_GEM = ['lib/my_gem.rb', <<~EOS]
     $for_gem_test_loader = Zeitwerk::Loader.for_gem
     $for_gem_test_loader.enable_reloading
     $for_gem_test_loader.setup
@@ -15,9 +15,9 @@ class TestForGem < LoaderTest
 
   def with_my_gem(files = [MY_GEM], rq = true)
     with_files(files) do
-      with_load_path("lib") do
+      with_load_path('lib') do
         if rq
-          assert require("my_gem")
+          assert require('my_gem')
           assert MyGem
         end
         yield
@@ -25,11 +25,11 @@ class TestForGem < LoaderTest
     end
   end
 
-  test "sets things correctly" do
+  test 'sets things correctly' do
     files = [
       MY_GEM,
-      ["lib/my_gem/foo.rb", "class MyGem::Foo; end"],
-      ["lib/my_gem/foo/bar.rb", "MyGem::Foo::Bar = true"]
+      ['lib/my_gem/foo.rb', 'class MyGem::Foo; end'],
+      ['lib/my_gem/foo/bar.rb', 'MyGem::Foo::Bar = true']
     ]
     with_my_gem(files) do
       assert MyGem::Foo::Bar
@@ -42,10 +42,10 @@ class TestForGem < LoaderTest
     end
   end
 
-  test "is idempotent" do
+  test 'is idempotent' do
     $for_gem_test_zs = []
     files = [
-      ["lib/my_gem.rb", <<-EOS],
+      ['lib/my_gem.rb', <<-EOS],
         $for_gem_test_zs << Zeitwerk::Loader.for_gem
         $for_gem_test_zs.last.enable_reloading
         $for_gem_test_zs.last.setup
@@ -67,49 +67,49 @@ class TestForGem < LoaderTest
     end
   end
 
-  test "configures the gem inflector by default" do
+  test 'configures the gem inflector by default' do
     with_my_gem do
       assert_instance_of Zeitwerk::GemInflector, $for_gem_test_loader.inflector
     end
   end
 
-  test "configures the basename of the root file as loader tag" do
+  test 'configures the basename of the root file as loader tag' do
     with_my_gem do
-      assert_equal "my_gem", $for_gem_test_loader.tag
+      assert_equal 'my_gem', $for_gem_test_loader.tag
     end
   end
 
-  test "does not warn if lib only has expected files" do
+  test 'does not warn if lib only has expected files' do
     with_my_gem([MY_GEM], false) do
       assert_silent do
-        assert require("my_gem")
+        assert require('my_gem')
       end
     end
   end
 
-  test "does not warn if lib only has extra, non-hidden, non-Ruby files" do
-    files = [MY_GEM, ["lib/i18n.yml", ""], ["lib/.vscode", ""]]
+  test 'does not warn if lib only has extra, non-hidden, non-Ruby files' do
+    files = [MY_GEM, ['lib/i18n.yml', ''], ['lib/.vscode', '']]
     with_my_gem(files, false) do
       assert_silent do
-        assert require("my_gem")
+        assert require('my_gem')
       end
     end
   end
 
-  test "warns if the lib has an extra Ruby file" do
-    files = [MY_GEM, ["lib/foo.rb", ""]]
+  test 'warns if the lib has an extra Ruby file' do
+    files = [MY_GEM, ['lib/foo.rb', '']]
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
-      assert_includes err, "Zeitwerk defines the constant Foo after the file"
-      assert_includes err, File.expand_path("lib/foo.rb")
-      assert_includes err, "Zeitwerk::Loader.for_gem(warn_on_extra_files: false)"
+      assert_includes err, 'Zeitwerk defines the constant Foo after the file'
+      assert_includes err, File.expand_path('lib/foo.rb')
+      assert_includes err, 'Zeitwerk::Loader.for_gem(warn_on_extra_files: false)'
     end
   end
 
-  test "does not warn if lib has an extra Ruby file, but it is ignored" do
-    files = [["lib/my_gem.rb", <<~EOS], ["lib/foo.rb", ""]]
+  test 'does not warn if lib has an extra Ruby file, but it is ignored' do
+    files = [['lib/my_gem.rb', <<~EOS], ['lib/foo.rb', '']]
       loader = Zeitwerk::Loader.for_gem
       loader.ignore("\#{__dir__}/foo.rb")
       loader.enable_reloading
@@ -120,14 +120,14 @@ class TestForGem < LoaderTest
     EOS
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
       assert_empty err
     end
   end
 
-  test "does not warn if lib has an extra Ruby file, but warnings are disabled" do
-    files = [["lib/my_gem.rb", <<~EOS], ["lib/foo.rb", ""]]
+  test 'does not warn if lib has an extra Ruby file, but warnings are disabled' do
+    files = [['lib/my_gem.rb', <<~EOS], ['lib/foo.rb', '']]
       loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
       loader.enable_reloading
       loader.setup
@@ -137,26 +137,26 @@ class TestForGem < LoaderTest
     EOS
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
       assert_empty err
     end
   end
 
-  test "warns if lib has an extra directory" do
-    files = [MY_GEM, ["lib/foo/bar.rb", "Foo::Bar = true"]]
+  test 'warns if lib has an extra directory' do
+    files = [MY_GEM, ['lib/foo/bar.rb', 'Foo::Bar = true']]
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
-      assert_includes err, "Zeitwerk defines the constant Foo after the directory"
-      assert_includes err, File.expand_path("lib/foo")
-      assert_includes err, "Zeitwerk::Loader.for_gem(warn_on_extra_files: false)"
+      assert_includes err, 'Zeitwerk defines the constant Foo after the directory'
+      assert_includes err, File.expand_path('lib/foo')
+      assert_includes err, 'Zeitwerk::Loader.for_gem(warn_on_extra_files: false)'
     end
   end
 
-  test "does not warn if lib has an extra directory, but it is ignored" do
-    files = [["lib/my_gem.rb", <<~EOS], ["lib/foo/bar.rb", "Foo::Bar = true"]]
+  test 'does not warn if lib has an extra directory, but it is ignored' do
+    files = [['lib/my_gem.rb', <<~EOS], ['lib/foo/bar.rb', 'Foo::Bar = true']]
       loader = Zeitwerk::Loader.for_gem
       loader.ignore("\#{__dir__}/foo")
       loader.enable_reloading
@@ -167,14 +167,14 @@ class TestForGem < LoaderTest
     EOS
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
       assert_empty err
     end
   end
 
-  test "does not warn if lib has an extra directory, but it has no Ruby files" do
-    files = [["lib/my_gem.rb", <<~EOS], ["lib/tasks/newsletter.rake", ""]]
+  test 'does not warn if lib has an extra directory, but it has no Ruby files' do
+    files = [['lib/my_gem.rb', <<~EOS], ['lib/tasks/newsletter.rake', '']]
       loader = Zeitwerk::Loader.for_gem
       loader.enable_reloading
       loader.setup
@@ -184,14 +184,14 @@ class TestForGem < LoaderTest
     EOS
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
       assert_empty err
     end
   end
 
-  test "does not warn if lib has an extra directory, but warnings are disabled" do
-    files = [["lib/my_gem.rb", <<~EOS], ["lib/foo/bar.rb", "Foo::Bar = true"]]
+  test 'does not warn if lib has an extra directory, but warnings are disabled' do
+    files = [['lib/my_gem.rb', <<~EOS], ['lib/foo/bar.rb', 'Foo::Bar = true']]
       loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
       loader.enable_reloading
       loader.setup
@@ -201,16 +201,16 @@ class TestForGem < LoaderTest
     EOS
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
       assert_empty err
     end
   end
 
-  test "warnings do not assume the namespace directory is the tag" do
-    files = [["lib/my_gem.rb", <<~EOS], ["lib/foo/bar.rb", "Foo::Bar = true"]]
+  test 'warnings do not assume the namespace directory is the tag' do
+    files = [['lib/my_gem.rb', <<~EOS], ['lib/foo/bar.rb', 'Foo::Bar = true']]
       loader = Zeitwerk::Loader.for_gem
-      loader.tag = "foo"
+      loader.tag = 'foo'
       loader.enable_reloading
       loader.setup
 
@@ -219,18 +219,18 @@ class TestForGem < LoaderTest
     EOS
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
-      assert_includes err, "Zeitwerk defines the constant Foo after the directory"
-      assert_includes err, File.expand_path("lib/foo")
-      assert_includes err, "Zeitwerk::Loader.for_gem(warn_on_extra_files: false)"
+      assert_includes err, 'Zeitwerk defines the constant Foo after the directory'
+      assert_includes err, File.expand_path('lib/foo')
+      assert_includes err, 'Zeitwerk::Loader.for_gem(warn_on_extra_files: false)'
     end
   end
 
-  test "warnings use the gem inflector" do
-    files = [["lib/my_gem.rb", <<~EOS], ["lib/foo/bar.rb", "Foo::Bar = true"]]
+  test 'warnings use the gem inflector' do
+    files = [['lib/my_gem.rb', <<~EOS], ['lib/foo/bar.rb', 'Foo::Bar = true']]
       loader = Zeitwerk::Loader.for_gem
-      loader.inflector.inflect("foo" => "BAR")
+      loader.inflector.inflect('foo' => 'BAR')
       loader.enable_reloading
       loader.setup
 
@@ -239,41 +239,41 @@ class TestForGem < LoaderTest
     EOS
     with_my_gem(files, false) do
       _out, err = capture_io do
-        assert require("my_gem")
+        assert require('my_gem')
       end
-      assert_includes err, "Zeitwerk defines the constant BAR after the directory"
-      assert_includes err, File.expand_path("lib/foo")
-      assert_includes err, "Zeitwerk::Loader.for_gem(warn_on_extra_files: false)"
+      assert_includes err, 'Zeitwerk defines the constant BAR after the directory'
+      assert_includes err, File.expand_path('lib/foo')
+      assert_includes err, 'Zeitwerk::Loader.for_gem(warn_on_extra_files: false)'
     end
   end
 
   # Emulates the project setup in https://github.com/fxn/zeitwerk/issues/282.
-  test "version inflection works with symlinked files" do
+  test 'version inflection works with symlinked files' do
     files = [
       MY_GEM,
-      ["lib/my_gem/version.rb", "MyGem::VERSION = '1.2.3'"]
+      ['lib/my_gem/version.rb', "MyGem::VERSION = '1.2.3'"]
     ]
     with_files(files) do
-      FileUtils.mkdir_p("lib2/my_gem")
-      File.symlink(File.expand_path("lib/my_gem.rb"), "lib2/my_gem.rb")
-      File.symlink(File.expand_path("lib/my_gem/version.rb"), "lib2/my_gem/version.rb")
-      with_load_path("lib2") do
-        require "my_gem"
-        assert_equal "1.2.3", MyGem::VERSION
+      FileUtils.mkdir_p('lib2/my_gem')
+      File.symlink(File.expand_path('lib/my_gem.rb'), 'lib2/my_gem.rb')
+      File.symlink(File.expand_path('lib/my_gem/version.rb'), 'lib2/my_gem/version.rb')
+      with_load_path('lib2') do
+        require 'my_gem'
+        assert_equal '1.2.3', MyGem::VERSION
       end
     end
   end
 
-  test "version inflection works with a symlinked lib" do
+  test 'version inflection works with a symlinked lib' do
     files = [
       MY_GEM,
-      ["lib/my_gem/version.rb", "MyGem::VERSION = '1.2.3'"]
+      ['lib/my_gem/version.rb', "MyGem::VERSION = '1.2.3'"]
     ]
     with_files(files) do
-      File.symlink(File.expand_path("lib"), "lib2")
-      with_load_path("lib2") do
-        require "my_gem"
-        assert_equal "1.2.3", MyGem::VERSION
+      File.symlink(File.expand_path('lib'), 'lib2')
+      with_load_path('lib2') do
+        require 'my_gem'
+        assert_equal '1.2.3', MyGem::VERSION
       end
     end
   end

@@ -57,7 +57,7 @@ class Zeitwerk::Loader::FileSystem # :nodoc:
     loop do
       yield abspath
       abspath, basename = File.split(abspath)
-      break if basename == "/"
+      break if basename == '/'
     end
   end
 
@@ -113,7 +113,7 @@ class Zeitwerk::Loader::FileSystem # :nodoc:
 
   #: (String) -> bool
   def rb_extension?(path)
-    path.end_with?(".rb")
+    path.end_with?('.rb')
   end
 
   #: (String) -> bool
@@ -123,7 +123,7 @@ class Zeitwerk::Loader::FileSystem # :nodoc:
 
   #: (String) -> bool
   def hidden?(basename)
-    basename.start_with?(".")
+    basename.start_with?('.')
   end
 
   private

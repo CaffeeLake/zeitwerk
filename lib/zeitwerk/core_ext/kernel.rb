@@ -22,7 +22,7 @@ module Kernel
   #: (String) -> bool
   def require(path)
     if loader = Zeitwerk::Registry.autoloads.registered?(path)
-      if path.end_with?(".rb")
+      if path.end_with?('.rb')
         required = zeitwerk_original_require(path)
         loader.__on_file_autoloaded(path) if required
         required

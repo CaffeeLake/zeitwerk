@@ -19,8 +19,8 @@ module Zeitwerk
     def initialize(root_file, namespace:, warn_on_extra_files:)
       super()
 
-      @tag = File.basename(root_file, ".rb")
-      @tag = real_mod_name(namespace) + "-" + @tag unless namespace.equal?(Object)
+      @tag = File.basename(root_file, '.rb')
+      @tag = real_mod_name(namespace) + '-' + @tag unless namespace.equal?(Object)
 
       @inflector           = GemInflector.new(root_file)
       @root_file           = File.expand_path(root_file)
@@ -40,13 +40,13 @@ module Zeitwerk
 
     #: () -> void
     def warn_on_extra_files
-      expected_namespace_dir = @root_file.delete_suffix(".rb")
+      expected_namespace_dir = @root_file.delete_suffix('.rb')
 
       @fs.ls(@root_dir) do |basename, abspath, ftype|
         next if abspath == @root_file
         next if abspath == expected_namespace_dir
 
-        basename_without_ext = basename.delete_suffix(".rb")
+        basename_without_ext = basename.delete_suffix('.rb')
         cname = cname_for(basename_without_ext, abspath)
 
         warn(<<~EOS)

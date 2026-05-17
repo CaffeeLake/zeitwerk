@@ -1,44 +1,44 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require 'test_helper'
 
 class TestAutovivification < LoaderTest
   module Namespace; end
 
-  test "autoloads a simple constant in an autovivified module (Object)" do
-    files = [["admin/x.rb", "Admin::X = true"]]
+  test 'autoloads a simple constant in an autovivified module (Object)' do
+    files = [['admin/x.rb', 'Admin::X = true']]
     with_setup(files) do
       assert_kind_of Module, Admin
       assert Admin::X
     end
   end
 
-  test "autoloads a simple constant in an autovivified module (Namespace)" do
-    files = [["admin/x.rb", "#{Namespace}::Admin::X = true"]]
+  test 'autoloads a simple constant in an autovivified module (Namespace)' do
+    files = [['admin/x.rb', "#{Namespace}::Admin::X = true"]]
     with_setup(files, namespace: Namespace) do
       assert_kind_of Module, Namespace::Admin
       assert Namespace::Admin::X
     end
   end
 
-  test "autovivifies several levels in a row (Object)" do
-    files = [["foo/bar/baz/woo.rb", "Foo::Bar::Baz::Woo = true"]]
+  test 'autovivifies several levels in a row (Object)' do
+    files = [['foo/bar/baz/woo.rb', 'Foo::Bar::Baz::Woo = true']]
     with_setup(files) do
       assert Foo::Bar::Baz::Woo
     end
   end
 
-  test "autovivifies several levels in a row (Namespace)" do
-    files = [["foo/bar/baz/woo.rb", "#{Namespace}::Foo::Bar::Baz::Woo = true"]]
+  test 'autovivifies several levels in a row (Namespace)' do
+    files = [['foo/bar/baz/woo.rb', "#{Namespace}::Foo::Bar::Baz::Woo = true"]]
     with_setup(files, namespace: Namespace) do
       assert Namespace::Foo::Bar::Baz::Woo
     end
   end
 
-  test "autoloads several constants from the same namespace (Object)" do
+  test 'autoloads several constants from the same namespace (Object)' do
     files = [
-      ["rd1/admin/hotel.rb", "class Admin::Hotel; end"],
-      ["rd2/admin/hotels_controller.rb", "class Admin::HotelsController; end"]
+      ['rd1/admin/hotel.rb', 'class Admin::Hotel; end'],
+      ['rd2/admin/hotels_controller.rb', 'class Admin::HotelsController; end']
     ]
     with_setup(files) do
       assert Admin::Hotel
@@ -46,10 +46,10 @@ class TestAutovivification < LoaderTest
     end
   end
 
-  test "autoloads several constants from the same namespace (Namespace)" do
+  test 'autoloads several constants from the same namespace (Namespace)' do
     files = [
-      ["rd1/admin/hotel.rb", "class #{Namespace}::Admin::Hotel; end"],
-      ["rd2/admin/hotels_controller.rb", "class #{Namespace}::Admin::HotelsController; end"]
+      ['rd1/admin/hotel.rb', "class #{Namespace}::Admin::Hotel; end"],
+      ['rd2/admin/hotels_controller.rb', "class #{Namespace}::Admin::HotelsController; end"]
     ]
     with_setup(files, namespace: Namespace) do
       assert Namespace::Admin::Hotel
@@ -57,10 +57,10 @@ class TestAutovivification < LoaderTest
     end
   end
 
-  test "does not register the namespace as explicit" do
+  test 'does not register the namespace as explicit' do
     files = [
-      ["rd1/admin/x.rb", "Admin::X = true"],
-      ["rd2/admin/y.rb", "Admin::Y = true"]
+      ['rd1/admin/x.rb', 'Admin::X = true'],
+      ['rd2/admin/y.rb', 'Admin::Y = true']
     ]
     with_setup(files) do
       cref = Zeitwerk::Cref.new(Object, :Admin)
@@ -68,11 +68,11 @@ class TestAutovivification < LoaderTest
     end
   end
 
-  test "autovivification is synchronized" do
+  test 'autovivification is synchronized' do
     $test_admin_const_set_calls = 0
     $test_admin_const_set_queue = Queue.new
 
-    files = [["admin/v2/user.rb", "class Admin::V2::User; end"]]
+    files = [['admin/v2/user.rb', 'class Admin::V2::User; end']]
     with_setup(files) do
       assert Admin
 
@@ -100,46 +100,46 @@ class TestAutovivification < LoaderTest
     end
   end
 
-  test "defines no namespace for empty directories" do
+  test 'defines no namespace for empty directories' do
     with_files do
-      FileUtils.mkdir("foo")
-      loader.push_dir(".")
+      FileUtils.mkdir('foo')
+      loader.push_dir('.')
       loader.setup
       assert !Object.autoload?(:Foo)
     end
   end
 
-  test "defines no namespace for empty directories (recursively)" do
+  test 'defines no namespace for empty directories (recursively)' do
     with_files do
-      FileUtils.mkdir_p("foo/bar/baz")
-      loader.push_dir(".")
+      FileUtils.mkdir_p('foo/bar/baz')
+      loader.push_dir('.')
       loader.setup
       assert !Object.autoload?(:Foo)
     end
   end
 
-  test "defines no namespace for directories whose files are all non-Ruby" do
-    with_setup([["tasks/newsletter.rake", ""], ["assets/.keep", ""]]) do
+  test 'defines no namespace for directories whose files are all non-Ruby' do
+    with_setup([['tasks/newsletter.rake', ''], ['assets/.keep', '']]) do
       assert !Object.autoload?(:Tasks)
       assert !Object.autoload?(:Assets)
     end
   end
 
-  test "defines no namespace for directories whose files are all non-Ruby (recursively)" do
-    with_setup([["tasks/product/newsletter.rake", ""], ["assets/css/.keep", ""]]) do
+  test 'defines no namespace for directories whose files are all non-Ruby (recursively)' do
+    with_setup([['tasks/product/newsletter.rake', ''], ['assets/css/.keep', '']]) do
       assert !Object.autoload?(:Tasks)
       assert !Object.autoload?(:Assets)
     end
   end
 
-  test "defines no namespace for directories whose Ruby files are all ignored" do
-    with_setup([["foo/bar/ignored.rb", "IGNORED"]]) do
+  test 'defines no namespace for directories whose Ruby files are all ignored' do
+    with_setup([['foo/bar/ignored.rb', 'IGNORED']]) do
       assert !Object.autoload?(:Foo)
     end
   end
 
-  test "defines no namespace for directories that have Ruby files below ignored directories" do
-    with_setup([["foo/ignored/baz.rb", "IGNORED"]]) do
+  test 'defines no namespace for directories that have Ruby files below ignored directories' do
+    with_setup([['foo/ignored/baz.rb', 'IGNORED']]) do
       assert !Object.autoload?(:Foo)
     end
   end

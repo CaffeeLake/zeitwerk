@@ -12,7 +12,7 @@ module Zeitwerk::Loader::EagerLoad
       break if @eager_loaded
       raise Zeitwerk::SetupRequired unless @setup
 
-      log { "eager load start" }
+      log { 'eager load start' }
 
       actual_roots.each do |root_dir, root_namespace|
         actual_eager_load_dir(root_dir, root_namespace, force: force)
@@ -25,7 +25,7 @@ module Zeitwerk::Loader::EagerLoad
 
       @eager_loaded = true
 
-      log { "eager load end" }
+      log { 'eager load end' }
     end
   end
 
@@ -92,11 +92,11 @@ module Zeitwerk::Loader::EagerLoad
         eager_load_child_namespace(mod, mod_name, root_dir, root_namespace)
       else
         root_namespace_name = real_mod_name(root_namespace)
-        if root_namespace_name.start_with?(mod_name + "::")
+        if root_namespace_name.start_with?(mod_name + '::')
           actual_eager_load_dir(root_dir, root_namespace)
         elsif mod_name == root_namespace_name
           actual_eager_load_dir(root_dir, root_namespace)
-        elsif mod_name.start_with?(root_namespace_name + "::")
+        elsif mod_name.start_with?(root_namespace_name + '::')
           eager_load_child_namespace(mod, mod_name, root_dir, root_namespace)
         else
           # Unrelated constant hierarchies, do nothing.
@@ -150,7 +150,7 @@ module Zeitwerk::Loader::EagerLoad
     elsif shadowed_file?(abspath)
       raise Zeitwerk::Error.new("#{abspath} is shadowed")
     else
-      cname = cname_for(file_basename.delete_suffix(".rb"), abspath)
+      cname = cname_for(file_basename.delete_suffix('.rb'), abspath)
       namespace.const_get(cname, false)
     end
   end
@@ -191,7 +191,7 @@ module Zeitwerk::Loader::EagerLoad
   private def eager_load_child_namespace(child, child_name, root_dir, root_namespace)
     suffix = child_name
     unless root_namespace.equal?(Object)
-      suffix = suffix.delete_prefix(real_mod_name(root_namespace) + "::")
+      suffix = suffix.delete_prefix(real_mod_name(root_namespace) + '::')
     end
 
     # These directories are at the same namespace level, there may be more if
@@ -204,7 +204,7 @@ module Zeitwerk::Loader::EagerLoad
     dirs = [root_dir]
     next_dirs = []
 
-    suffix.split("::").each do |segment|
+    suffix.split('::').each do |segment|
       while (dir = dirs.shift)
         @fs.ls(dir) do |basename, abspath, ftype|
           if ftype == :directory && segment == cname_for(basename, abspath).to_s

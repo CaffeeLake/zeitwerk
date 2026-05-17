@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require 'test_helper'
 
 class TestExplicitNamespace < LoaderTest
   module Namespace; end
 
-  test "explicit namespaces are loaded correctly (directory first, Object)" do
+  test 'explicit namespaces are loaded correctly (directory first, Object)' do
     files = [
-      ["hotel.rb", "class Hotel; X = 1; end"],
-      ["hotel/pricing.rb", "class Hotel::Pricing; end"]
+      ['hotel.rb', 'class Hotel; X = 1; end'],
+      ['hotel/pricing.rb', 'class Hotel::Pricing; end']
     ]
     with_setup(files) do
       assert_kind_of Class, Hotel
@@ -17,10 +17,10 @@ class TestExplicitNamespace < LoaderTest
     end
   end
 
-  test "explicit namespaces are loaded correctly (directory first, Namespace)" do
+  test 'explicit namespaces are loaded correctly (directory first, Namespace)' do
     files = [
-      ["hotel.rb", "class #{Namespace}::Hotel; X = 1; end"],
-      ["hotel/pricing.rb", "class #{Namespace}::Hotel::Pricing; end"]
+      ['hotel.rb', "class #{Namespace}::Hotel; X = 1; end"],
+      ['hotel/pricing.rb', "class #{Namespace}::Hotel::Pricing; end"]
     ]
     with_setup(files, namespace: Namespace) do
       assert_kind_of Class, Namespace::Hotel
@@ -29,10 +29,10 @@ class TestExplicitNamespace < LoaderTest
     end
   end
 
-  test "explicit namespaces are loaded correctly (file first, Object)" do
+  test 'explicit namespaces are loaded correctly (file first, Object)' do
     files = [
-      ["rd1/hotel.rb", "class Hotel; X = 1; end"],
-      ["rd2/hotel/pricing.rb", "class Hotel::Pricing; end"]
+      ['rd1/hotel.rb', 'class Hotel; X = 1; end'],
+      ['rd2/hotel/pricing.rb', 'class Hotel::Pricing; end']
     ]
     with_setup(files) do
       assert_kind_of Class, Hotel
@@ -41,10 +41,10 @@ class TestExplicitNamespace < LoaderTest
     end
   end
 
-  test "explicit namespaces are loaded correctly (file first, Namespace)" do
+  test 'explicit namespaces are loaded correctly (file first, Namespace)' do
     files = [
-      ["rd1/hotel.rb", "class #{Namespace}::Hotel; X = 1; end"],
-      ["rd2/hotel/pricing.rb", "class #{Namespace}::Hotel::Pricing; end"]
+      ['rd1/hotel.rb', "class #{Namespace}::Hotel; X = 1; end"],
+      ['rd2/hotel/pricing.rb', "class #{Namespace}::Hotel::Pricing; end"]
     ]
     with_setup(files, namespace: Namespace) do
       assert_kind_of Class, Namespace::Hotel
@@ -53,10 +53,10 @@ class TestExplicitNamespace < LoaderTest
     end
   end
 
-  test "explicit namespaces defined with an explicit constant assignment are loaded correctly" do
+  test 'explicit namespaces defined with an explicit constant assignment are loaded correctly' do
     files = [
-      ["hotel.rb", "Hotel = Class.new; Hotel::X = 1"],
-      ["hotel/pricing.rb", "class Hotel::Pricing; end"]
+      ['hotel.rb', 'Hotel = Class.new; Hotel::X = 1'],
+      ['hotel/pricing.rb', 'class Hotel::Pricing; end']
     ]
     with_setup(files) do
       assert_kind_of Class, Hotel
@@ -65,42 +65,42 @@ class TestExplicitNamespace < LoaderTest
     end
   end
 
-  test "explicit namespaces are loaded correctly even if #name is overridden" do
+  test 'explicit namespaces are loaded correctly even if #name is overridden' do
     files = [
-      ["hotel.rb", <<~RUBY],
+      ['hotel.rb', <<~RUBY],
         class Hotel
           def self.name
             "X"
           end
         end
       RUBY
-      ["hotel/pricing.rb", "class Hotel::Pricing; end"]
+      ['hotel/pricing.rb', 'class Hotel::Pricing; end']
     ]
     with_setup(files) do
       assert Hotel::Pricing
     end
   end
 
-  test "explicit namespaces managed by different instances" do
+  test 'explicit namespaces managed by different instances' do
     files = [
-      ["a/m.rb", "module M; end"], ["a/m/n.rb", "M::N = true"],
-      ["b/x.rb", "module X; end"], ["b/x/y.rb", "X::Y = true"],
+      ['a/m.rb', 'module M; end'], ['a/m/n.rb', 'M::N = true'],
+      ['b/x.rb', 'module X; end'], ['b/x/y.rb', 'X::Y = true'],
     ]
     with_files(files) do
-      new_loader(dirs: "a")
-      new_loader(dirs: "b")
+      new_loader(dirs: 'a')
+      new_loader(dirs: 'b')
 
       assert M::N
       assert X::Y
     end
   end
 
-  test "autoloads are set correctly, even if there are autoloads for the same cname in the superclass" do
+  test 'autoloads are set correctly, even if there are autoloads for the same cname in the superclass' do
     files = [
-      ["a.rb", "class A; end"],
-      ["a/x.rb", "A::X = :A"],
-      ["b.rb", "class B < A; end"],
-      ["b/x.rb", "B::X = :B"]
+      ['a.rb', 'class A; end'],
+      ['a/x.rb', 'A::X = :A'],
+      ['b.rb', 'class B < A; end'],
+      ['b/x.rb', 'B::X = :B']
     ]
     with_setup(files) do
       assert_kind_of Class, A
@@ -109,12 +109,12 @@ class TestExplicitNamespace < LoaderTest
     end
   end
 
-  test "autoloads are set correctly, even if there are autoloads for the same cname in a module prepended to the superclass" do
+  test 'autoloads are set correctly, even if there are autoloads for the same cname in a module prepended to the superclass' do
     files = [
-      ["m/x.rb", "M::X = :M"],
-      ["a.rb", "class A; prepend M; end"],
-      ["b.rb", "class B < A; end"],
-      ["b/x.rb", "B::X = :B"]
+      ['m/x.rb', 'M::X = :M'],
+      ['a.rb', 'class A; prepend M; end'],
+      ['b.rb', 'class B < A; end'],
+      ['b/x.rb', 'B::X = :B']
     ]
     with_setup(files) do
       assert_kind_of Class, A
@@ -123,12 +123,12 @@ class TestExplicitNamespace < LoaderTest
     end
   end
 
-  test "autoloads are set correctly, even if there are autoloads for the same cname in other ancestors" do
+  test 'autoloads are set correctly, even if there are autoloads for the same cname in other ancestors' do
     files = [
-      ["m/x.rb", "M::X = :M"],
-      ["a.rb", "class A; include M; end"],
-      ["b.rb", "class B < A; end"],
-      ["b/x.rb", "B::X = :B"]
+      ['m/x.rb', 'M::X = :M'],
+      ['a.rb', 'class A; include M; end'],
+      ['b.rb', 'class B < A; end'],
+      ['b/x.rb', 'B::X = :B']
     ]
     with_setup(files) do
       assert_kind_of Class, A
@@ -137,22 +137,22 @@ class TestExplicitNamespace < LoaderTest
     end
   end
 
-  test "namespace promotion updates the registry" do
+  test 'namespace promotion updates the registry' do
     # We use two root directories to make sure the loader visits the implicit
     # rd1/m first, and the explicit rd2/m.rb after it.
     files = [
-      ["rd1/m/x.rb", "M::X = true"],
-      ["rd2/m.rb", "module M; end"]
+      ['rd1/m/x.rb', 'M::X = true'],
+      ['rd2/m.rb', 'module M; end']
     ]
     with_setup(files) do
-      assert_nil Zeitwerk::Registry.autoloads.registered?(File.expand_path("rd1/m"))
-      assert_same loader, Zeitwerk::Registry.autoloads.registered?(File.expand_path("rd2/m.rb"))
+      assert_nil Zeitwerk::Registry.autoloads.registered?(File.expand_path('rd1/m'))
+      assert_same loader, Zeitwerk::Registry.autoloads.registered?(File.expand_path('rd2/m.rb'))
     end
   end
 
-  test "non-hashable explicit namespaces are supported" do
+  test 'non-hashable explicit namespaces are supported' do
     files = [
-      ["m.rb", <<~EOS],
+      ['m.rb', <<~EOS],
         module M
           # This method is overridden with a different arity. Therefore, M is
           # not hashable. See https://github.com/fxn/zeitwerk/issues/188.
@@ -160,23 +160,23 @@ class TestExplicitNamespace < LoaderTest
           end
         end
       EOS
-      ["m/x.rb", "M::X = true"]
+      ['m/x.rb', 'M::X = true']
     ]
     with_setup(files) do
       assert M::X
     end
   end
 
-  test "if the expected constant does not define a class or module object, we raise a controlled error" do
+  test 'if the expected constant does not define a class or module object, we raise a controlled error' do
     on_teardown { remove_const :Hotel }
 
     files = [
-      ["hotel.rb", "Hotel = 1"],
-      ["hotel/pricing.rb", "class Hotel::Pricing; end"]
+      ['hotel.rb', 'Hotel = 1'],
+      ['hotel/pricing.rb', 'class Hotel::Pricing; end']
     ]
     with_setup(files) do
       error = assert_raises(Zeitwerk::Error) { Hotel }
-      assert_equal "Hotel is expected to be a namespace, should be a class or module (got Integer)", error.message
+      assert_equal 'Hotel is expected to be a namespace, should be a class or module (got Integer)', error.message
     end
   end
 end

@@ -12,7 +12,7 @@ module Zeitwerk::Loader::Helpers
       raise TypeError, "#{inflector.class}#camelize must return a String, received #{cname.inspect}"
     end
 
-    if cname.include?("::")
+    if cname.include?('::')
       raise Zeitwerk::NameError.new(<<~MESSAGE, cname)
         wrong constant name #{cname} inferred by #{inflector.class} from
 
@@ -25,7 +25,7 @@ module Zeitwerk::Loader::Helpers
     begin
       CNAME_VALIDATOR.const_defined?(cname, false)
     rescue ::NameError => error
-      path_type = @fs.rb_extension?(abspath) ? "file" : "directory"
+      path_type = @fs.rb_extension?(abspath) ? 'file' : 'directory'
 
       raise Zeitwerk::NameError.new(<<~MESSAGE, error.name)
         #{error.message} inferred by #{inflector.class} from #{path_type}
