@@ -21,13 +21,13 @@ module Zeitwerk
     end
   end
 
-  class ShadowedFileError < Error
+  class ConflictingNamespaceDefinitionError < Error
     #: (String, location: String?, conflicting_file: String) -> void
-    def initialize(name, location:, conflicting_file:)
+    def initialize(cpath, location:, conflicting_file:)
       if location
-        super("#{name} is already defined at #{location}, so #{conflicting_file} is invalid")
+        super("conflicting namespace definition for #{cpath}: #{conflicting_file} conflicts with #{location}")
       else
-        super("#{name} is already defined, possibly by C code, so #{conflicting_file} is invalid")
+        super("conflicting namespace definition for #{cpath}: #{conflicting_file} conflicts with an already defined namespace")
       end
     end
   end

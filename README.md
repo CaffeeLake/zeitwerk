@@ -324,9 +324,9 @@ my_component/tests/test_widget.rb
 
 Loaders with an nsfile configured also support explicit namespaces defined in ordinary files. The styles are not exclusive. Some parts of the project may be component-oriented, while in other parts ordinary files may feel more natural. That works.
 
-However, attempting to define the same namespace using an ordinary file and an nsfile is an error condition that raises `Zeitwerk::ShadowedFileError`.
+However, attempting to define the same namespace using an ordinary file and an nsfile is an error condition that raises `Zeitwerk::ConflictingNamespaceDefinitionError`.
 
-Nsfiles in root directories raise `Zeitwerk::ShadowedFileError` too, since the namespace in a root directory is externally defined.
+Nsfiles in root directories raise `Zeitwerk::ConflictingNamespaceDefinitionError` too, since the namespace in a root directory is externally defined.
 
 A project file whose basename is equal to the nsfile is always considered to be an nsfile. You cannot opt out. Therefore, if we have:
 

@@ -500,7 +500,7 @@ module Zeitwerk
               cpath = real_mod_name(mod)
               location = Object.const_source_location(cpath)&.join(":")
               location = nil if location&.empty?
-              raise Zeitwerk::ShadowedFileError.new(cpath, location: location, conflicting_file: abspath)
+              raise Zeitwerk::ConflictingNamespaceDefinitionError.new(cpath, location: location, conflicting_file: abspath)
             end
             next # Pass if this is a managed namespace, the nsfile was already probed when visiting the parent directory.
           end
@@ -520,7 +520,7 @@ module Zeitwerk
       if autoload_path = cref.autoload? || Registry.inceptions.registered?(cref)
         if @fs.rb_extension?(autoload_path)
           if File.basename(autoload_path) == @nsfile && autoload_path_set_by_me_for?(cref)
-            raise Zeitwerk::ShadowedFileError.new(cref.path, location: autoload_path, conflicting_file: file)
+            raise Zeitwerk::ConflictingNamespaceDefinitionError.new(cref.path, location: autoload_path, conflicting_file: file)
           end
           shadowed_files << file
           log { "file #{file} is ignored because #{autoload_path} has precedence" }
@@ -547,7 +547,7 @@ module Zeitwerk
           # file, either regular or nsfile. Therefore, a nsfile would be a
           # duplication.
           if nsfile_abspath = @fs.has_exactly_one_nsfile?(cref, subdir)
-            raise Zeitwerk::ShadowedFileError.new(cref.path, location: autoload_path, conflicting_file: nsfile_abspath)
+            raise Zeitwerk::ConflictingNamespaceDefinitionError.new(cref.path, location: autoload_path, conflicting_file: nsfile_abspath)
           end
           # Scanning visited a Ruby file first, and now a directory for the same
           # constant has been found. This is an explicit namespace.
