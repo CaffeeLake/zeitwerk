@@ -2,5 +2,25 @@ AllCops:
   DisabledByDefault: true
   SuggestExtensions: false
 
+Layout/ClosingHeredocIndentation:
+  Enabled: true
+
+Layout/CommentIndentation:
+  Enabled: true
+
+Layout/DefEndAlignment:
+  Enabled: true
+
+Layout/ElseAlignment:
+  Enabled: true
+
+Layout/EmptyLineAfterMagicComment:
+  Enabled: true
+
+Layout/EndAlignment:
+  Enabled: true
+  EnforcedStyleAlignWith: variable
+  AutoCorrect: true
+
 Style/StringLiterals:
   EnforcedStyle: single_quotes
