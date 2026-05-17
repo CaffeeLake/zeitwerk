@@ -1,5 +1,35 @@
 # CHANGELOG
 
+## 2.8.0 (unreleased)
+
+* Adds support for namespace files, _nsfiles_ for short.
+
+  If a loader has an nsfile configured (`nil` by default):
+
+  ```ruby
+  loader.nsfile = 'ns.rb' # must be set before setup
+  ```
+
+  explicit namespaces can be defined by such special file inside their
+  directories:
+
+  ```
+  my_component/ns.rb     # MyComponent
+  my_component/widget.rb # MyComponent::Widget
+  ```
+
+  This may be handy for self-contained units for which a `my_component.rb` file
+  in the parent directory would feel unnatural.
+
+  If an nsfile is set, you can still define explicit namespaces as always. Both
+  styles can coexist in the project. However, it is an error condition to try to
+  define the same namespace using both conventions.
+
+  For further details, please check the [documentation for nsfiles](https://github.com/fxn/zeitwerk#explicit-namespaces-defined-in-nsfiles).
+
+* When a file is shadowed because the constant path it maps to already exists,
+  the location of said constant is included in the log message.
+
 ## 2.7.5 (19 Feb 2026)
 
 * If available, tree traversal is based on `Dir.scan`, which saves syscalls in common platforms. This method is a recent addition to Ruby contributed by @byroot, so you need to be on Ruby `master` to leverage this for now.
