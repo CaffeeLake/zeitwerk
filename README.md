@@ -278,7 +278,7 @@ app/models/hotel.rb         -> Hotel
 app/models/hotel/pricing.rb -> Hotel::Pricing
 ```
 
-Since there is a file `app/models/hotel.rb` and also a directory `app/models/hotel`, Zeitwerk realizes `Hotel` is a namespace that is defined in `app/models/hotel.rb`, so it won't autovivify a module.
+Since there is a file `app/models/hotel.rb` and also a directory `app/models/hotel`, Zeitwerk realizes `Hotel` is a namespace that is defined in `app/models/hotel.rb`.
 
 In order to realize this, the directory or directories conforming the namespace do not need to be next to the file, as in the example, they could be in some other root directory.
 
@@ -292,8 +292,6 @@ end
 ```
 
 When autoloaded, Zeitwerk verifies the expected constant (`Hotel` in the example) stores a class or module object. If it doesn't, `Zeitwerk::Error` is raised.
-
-An explicit namespace must be managed by one single loader. Loaders that reopen namespaces owned by other projects are responsible for loading their constants before setup.
 
 <a id="markdown-explicit-namespaces-defined-in-nsfiles" name="explicit-namespaces-defined-in-nsfiles"></a>
 #### Explicit namespaces defined in nsfiles
@@ -330,13 +328,19 @@ However, attempting to define the same namespace using an ordinary file and an n
 
 Nsfiles in root directories raise `Zeitwerk::ShadowedFileError` too, since the namespace in a root directory is externally defined.
 
-Please, note that a project file whose basename is equal to the nsfile is always considered to be an nsfile. You cannot opt out. Therefore, if we have:
+A project file whose basename is equal to the nsfile is always considered to be an nsfile. You cannot opt out. Therefore, if we have:
 
 ```ruby
 loader.nsfile = 'index.rb'
 ```
 
 there is no way `foo/index.rb` can define `Foo::Index` in any part of the project, it must define `Foo`.
+
+While configurable, `ns.rb` is the recommended convention:
+
+* `ns.rb` is short.
+* `ns.rb` suggests "namespace".
+* Needing an `Ns` constant is unlikely.
 
 <a id="markdown-collapsing-directories" name="collapsing-directories"></a>
 ### Collapsing directories
