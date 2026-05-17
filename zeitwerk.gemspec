@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lib/zeitwerk/version"
+require_relative 'lib/zeitwerk/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'zeitwerk'

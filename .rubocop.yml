@@ -1,0 +1,6 @@
+AllCops:
+  DisabledByDefault: true
+  SuggestExtensions: false
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes

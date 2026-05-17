@@ -4,6 +4,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'rubocop', require: false
+
 gem 'minitest', '~> 6.0'
 gem 'minitest-focus'
 gem 'minitest-mock'
