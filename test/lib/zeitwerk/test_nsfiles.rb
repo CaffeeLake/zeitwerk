@@ -2,7 +2,14 @@
 
 require 'test_helper'
 
-class TestNsFilesValidations < LoaderTest
+class NsfilesTest < LoaderTest
+  def setup
+    super
+    loader.nsfile = 'ns.rb'
+  end
+end
+
+class TestNsFilesValidations < NsfilesTest
   test 'nsfiles must be strings' do
     e = assert_raises(TypeError) do
       loader.nsfile = :ns
@@ -32,31 +39,31 @@ class TestNsFilesValidations < LoaderTest
   end
 end
 
-class TestNsfilesFeatures < LoaderTest
-  def setup
-    super
-    loader.nsfile = 'ns.rb'
-  end
-
+class TestNsfilesFeatures < NsfilesTest
   test 'nsfiles define namespaces (direct)' do
-    files = [['widget/ns.rb', 'Widget = Class.new']]
-    with_setup(files) do
+    with_setup([['widget/ns.rb', 'Widget = Class.new']]) do
       assert_kind_of Class, Widget
     end
   end
 
   test 'other files are loaded as usual' do
-    files = [['widget/ns.rb', 'Widget = Class.new'], ['widget/x.rb', 'Widget::X = true']]
+    files = [
+      ['widget/ns.rb', 'Widget = Class.new'],
+      ['widget/x.rb', 'Widget::X = true']
+   ]
     with_setup(files) do
       assert_kind_of Class, Widget
       assert Widget::X
     end
   end
 
-  test 'nsfiles DO NOT define namespaces if ignored' do
+  test 'nsfiles do not define namespaces if ignored' do
     loader.nsfile = 'ignored.rb'
 
-    files = [['widget/ignored.rb'], ['widget/x.rb', 'Widget::X = true']]
+    files = [
+      ['widget/ignored.rb'],
+      ['widget/x.rb', 'Widget::X = true']
+    ]
     with_setup(files) do
       assert_kind_of Module, Widget
       assert Widget::X
@@ -64,14 +71,16 @@ class TestNsfilesFeatures < LoaderTest
   end
 
   test 'nsfiles define namespaces (collapsed)' do
-    files = [['widget/collapsed/ns.rb', 'Widget = Class.new']]
-    with_setup(files) do
+    with_setup([['widget/collapsed/ns.rb', 'Widget = Class.new']]) do
       assert_kind_of Class, Widget
     end
   end
 
   test 'other files are loaded as usual (collapsed)' do
-    files = [['widget/collapsed/ns.rb', 'Widget = Class.new'], ['widget/collapsed/x.rb', 'Widget::X = true']]
+    files = [
+      ['widget/collapsed/ns.rb', 'Widget = Class.new'],
+      ['widget/collapsed/x.rb', 'Widget::X = true']
+    ]
     with_setup(files) do
       assert_kind_of Class, Widget
       assert Widget::X
@@ -85,7 +94,11 @@ class TestNsfilesFeatures < LoaderTest
   end
 
   test 'other files are loaded as usual (collapsed, nested)' do
-    with_setup([['widget/collapsed/collapsed/ns.rb', 'Widget = Class.new'], ['widget/collapsed/collapsed/x.rb', 'Widget::X = true']]) do
+    files = [
+      ['widget/collapsed/collapsed/ns.rb', 'Widget = Class.new'],
+      ['widget/collapsed/collapsed/x.rb', 'Widget::X = true']
+    ]
+    with_setup(files) do
       assert_kind_of Class, Widget
       assert Widget::X
     end
@@ -102,8 +115,7 @@ class TestNsfilesFeatures < LoaderTest
   end
 
   test 'nsfiles are supported by load_file' do
-    files = [['widget/ns.rb', 'Widget = Class.new']]
-    with_setup(files) do
+    with_setup([['widget/ns.rb', 'Widget = Class.new']]) do
       loader.load_file('widget/ns.rb')
 
       assert_kind_of Class, Widget
@@ -122,14 +134,31 @@ class TestNsfilesFeatures < LoaderTest
       assert_kind_of Class, Widget::Uploader
     end
   end
-end
 
-class TestNsfilesErrorConditions < LoaderTest
-  def setup
-    super
-    loader.nsfile = 'ns.rb'
+  test 'cpath_expected_at supports nsfiles' do
+    with_setup([['widget/ns.rb', 'Widget = Class.new']]) do
+      assert_equal 'Widget', loader.cpath_expected_at('widget/ns.rb')
+    end
   end
 
+  test 'all_expected_cpaths supports nsfiles' do
+    files = [
+      ['widget/ns.rb', 'Widget = Class.new'],
+      ['widget/x.rb', 'Widget::X = true']
+    ]
+    with_setup(files) do
+      expected = {
+        File.expand_path('.') => 'Object',
+        File.expand_path('widget') => 'Widget',
+        File.expand_path('widget/ns.rb') => 'Widget',
+        File.expand_path('widget/x.rb') => 'Widget::X'
+      }
+      assert_equal expected, loader.all_expected_cpaths
+    end
+  end
+end
+
+class TestNsfilesErrorConditions < NsfilesTest
   test 'nsfiles on external namespaces raise (root directory)' do
     with_files(['ns.rb']) do
       loader.push_dir('.')
@@ -252,12 +281,6 @@ class TestNsfilesErrorConditions < LoaderTest
       loader.push_dir('rd3')
 
       assert_raises(Zeitwerk::ConflictingNamespaceDefinitionError) { loader.setup }
-    end
-  end
-
-  test 'cpath_expected_at supports nsfiles' do
-    with_setup([['widget/ns.rb', 'Widget = Class.new']]) do
-      assert_equal 'Widget', loader.cpath_expected_at('widget/ns.rb')
     end
   end
 end
