@@ -322,7 +322,7 @@ my_component/assets/widget.js
 my_component/tests/test_widget.rb
 ```
 
-Loaders with an nsfile configured also support explicit namespaces defined in ordinary files. The styles are not exclusive. Some parts of the project may be component-oriented, while in other parts ordinary files may feel more natural. That works.
+Loaders with an nsfile configured also support explicit namespaces defined in ordinary files. The conventions are not exclusive project-wide. Some parts may be component-oriented, while in other parts ordinary files may feel more natural. That works.
 
 However, attempting to define the same namespace using an ordinary file and an nsfile is an error condition that raises `Zeitwerk::ConflictingNamespaceDefinitionError`.
 
