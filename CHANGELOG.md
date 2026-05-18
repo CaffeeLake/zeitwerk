@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.8.0 (unreleased)
+## 2.8.0 (18 May 2026)
 
 * Adds support for namespace files, _nsfiles_ for short.
 
