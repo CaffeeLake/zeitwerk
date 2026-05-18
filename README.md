@@ -305,8 +305,8 @@ loader.nsfile = 'ns.rb' # must be set before setup
 you can alternatively define the explicit namespace inside its directory:
 
 ```
-my_component/ns.rb     # MyComponent
-my_component/widget.rb # MyComponent::Widget
+my_component/ns.rb     -> MyComponent
+my_component/widget.rb -> MyComponent::Widget
 ```
 
 This may be handy for self-contained units for which a `my_component.rb` file in the parent directory would feel unnatural.
@@ -316,8 +316,8 @@ A loader's nsfile has to be a non-hidden basename with a `.rb` extension, as in 
 Collapsed directories work as expected. For example, if we assume that `src` is collapsed, and that `assets` and `tests` are ignored, you could have the code organized this way:
 
 ```
-my_component/src/ns.rb     # MyComponent
-my_component/src/widget.rb # MyComponent::Widget
+my_component/src/ns.rb            -> MyComponent
+my_component/src/widget.rb        -> MyComponent::Widget
 my_component/assets/widget.js
 my_component/tests/test_widget.rb
 ```
