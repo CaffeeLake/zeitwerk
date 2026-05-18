@@ -328,7 +328,7 @@ However, attempting to define the same namespace using an ordinary file and an n
 
 Nsfiles in root directories raise `Zeitwerk::ConflictingNamespaceDefinitionError` too, since the namespace in a root directory is externally defined.
 
-A project file whose basename is equal to the nsfile is always considered to be an nsfile. You cannot opt out. Therefore, if we have:
+Non-ignored files whose basename is equal to the nsfile are always considered to be nsfiles. You cannot opt out. Therefore, if we have:
 
 ```ruby
 loader.nsfile = 'index.rb'
