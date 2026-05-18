@@ -336,12 +336,6 @@ loader.nsfile = 'index.rb'
 
 there is no way `foo/index.rb` can define `Foo::Index` in any part of the project, it must define `Foo`.
 
-While configurable, `ns.rb` is the recommended convention:
-
-* `ns.rb` is short.
-* `ns.rb` suggests "namespace".
-* Needing an `Ns` constant is unlikely.
-
 <a id="markdown-collapsing-directories" name="collapsing-directories"></a>
 ### Collapsing directories
 
