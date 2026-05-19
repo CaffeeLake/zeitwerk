@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2.8.1 (19 May 2026)
+
+* Replace anonymous block parameters with regular named ones.
+
+  Ruby 3.3.0 has a bug: it does not parse anonymous block parameters, which were
+  introduced in Ruby 3.1.
+
+  While this is a Ruby bug and people could upgrade to 3.3.1, I prefer users
+  just do not hit this. At the end of the day, it is cosmetic.
+
 ## 2.8.0 (18 May 2026)
 
 * Adds support for namespace files, _nsfiles_ for short.
