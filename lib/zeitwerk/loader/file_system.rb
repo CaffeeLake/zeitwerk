@@ -27,7 +27,7 @@ class Zeitwerk::Loader::FileSystem # :nodoc:
   # path, and file type, which can only be :file or :directory.
   #
   #: (String) { (String, String, Symbol) -> void } -> void
-  def ls(dir, collapse: true, &)
+  def ls(dir, collapse: true, &block)
     children = relevant_dir_entries(dir)
 
     # The order in which a directory is listed depends on the file system.
@@ -43,7 +43,7 @@ class Zeitwerk::Loader::FileSystem # :nodoc:
           @loader.__log { "directory #{abspath} is ignored because it has no Ruby files" }
           next
         elsif collapse && @loader.__collapse?(abspath)
-          ls(abspath, collapse: collapse, &)
+          ls(abspath, collapse: collapse, &block)
           next
         end
       end
