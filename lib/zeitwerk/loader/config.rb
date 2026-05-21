@@ -278,7 +278,13 @@ module Zeitwerk::Loader::Config
   #
   #: (String?) { (top, String) -> void } -> void ! TypeError
   def on_load(cpath = :ANY, &block)
-    raise TypeError, 'on_load only accepts strings' unless cpath.is_a?(String) || cpath == :ANY
+    case cpath
+    when String
+      cpath = cpath.delete_prefix("::")
+    when :ANY
+    else
+      raise TypeError, 'on_load only accepts strings'
+    end
 
     mutex.synchronize do
       (on_load_callbacks[cpath] ||= []) << block

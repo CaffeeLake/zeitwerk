@@ -202,4 +202,15 @@ class TestOnLoad < LoaderTest
       assert loaded
     end
   end
+
+  test 'on_load with qualified cpath executes callback' do
+    files = [['a/b.rb', 'class A::B; end']]
+    with_setup(files) do
+      loaded = false
+      loader.on_load('::A::B') { loaded = A::B }
+
+      assert A::B
+      assert loaded
+    end
+  end
 end
