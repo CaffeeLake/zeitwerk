@@ -280,7 +280,7 @@ module Zeitwerk::Loader::Config
   def on_load(cpath = :ANY, &block)
     case cpath
     when String
-      cpath = cpath.delete_prefix("::")
+      cpath = cpath.delete_prefix('::')
     when :ANY
     else
       raise TypeError, 'on_load only accepts strings'
