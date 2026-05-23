@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2.8.2 (23 May 2026)
+
+* `on_load` and `on_unload` accept constant paths with leading colons. For example:
+
+   ```ruby
+   loader.on_load('::User') { ... }
+   ```
+
+* `on_load` and `on_unload` validate that their input is a constant path. For example:
+
+   ```ruby
+   loader.on_load(':User') { ... }
+   ```
+
+   raises `NameError`.
+
 ## 2.8.1 (19 May 2026)
 
 * Replace anonymous block parameters with regular named ones.
