@@ -13,11 +13,18 @@ class TestOnUnload < LoaderTest
     end
   end
 
+  test 'on_unload ensures its argument is a constant path' do
+    assert_raises(NameError) { loader.on_unload('') }
+    assert_raises(NameError) { loader.on_unload('invalid') }
+    assert_raises(NameError) { loader.on_unload(':Invalid') }
+    assert_raises(NameError) { loader.on_unload('Invalid:Invalid') }
+  end
+
   test 'multiple on_unload on cpaths are called in order of definition' do
     with_setup([['x.rb', 'X = 1']]) do
       x = []
       loader.on_unload('X') { x << 1 }
-      loader.on_unload('X') { x << 2 }
+      loader.on_unload('::X') { x << 2 }
 
       assert X
       loader.reload

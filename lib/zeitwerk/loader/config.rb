@@ -279,15 +279,15 @@ module Zeitwerk::Loader::Config
   #     # ...
   #   end
   #
-  #: (String) { (top, String) -> void } -> void ! TypeError
-  #| { (String, top, String) -> void } -> void ! TypeError
+  #: (String) { (top, String) -> void } -> void ! TypeError | NameError
+  #| { (String, top, String) -> void } -> void
   def on_load(cpath = UNDEFINED, &block)
     key = if cpath.equal?(UNDEFINED)
       :ANY
     elsif !cpath.is_a?(String)
       raise TypeError, 'on_load only accepts strings'
     else
-      cpath.delete_prefix('::')
+      @cpv.validate!(cpath)
     end
 
     mutex.synchronize do
@@ -309,15 +309,15 @@ module Zeitwerk::Loader::Config
   #     # ...
   #   end
   #
-  #: (String) { (top, String) -> void } -> void ! TypeError
-  #| { (String, top, String) -> void } -> void ! TypeError
+  #: (String) { (top, String) -> void } -> void ! TypeError | NameError
+  #| { (String, top, String) -> void } -> void
   def on_unload(cpath = UNDEFINED, &block)
     key = if cpath.equal?(UNDEFINED)
       :ANY
     elsif !cpath.is_a?(String)
       raise TypeError, 'on_unload only accepts strings'
     else
-      cpath.delete_prefix('::')
+      @cpv.validate!(cpath)
     end
 
     mutex.synchronize do

@@ -13,6 +13,13 @@ class TestOnLoad < LoaderTest
     end
   end
 
+  test 'on_load ensures its argument is a constant path' do
+    assert_raises(NameError) { loader.on_load('') }
+    assert_raises(NameError) { loader.on_load('invalid') }
+    assert_raises(NameError) { loader.on_load(':Invalid') }
+    assert_raises(NameError) { loader.on_load('Invalid:Invalid') }
+  end
+
   test 'on_load is called in the expected order, no namespace' do
     files = [
       ['a.rb', 'class A; end'],
@@ -22,8 +29,8 @@ class TestOnLoad < LoaderTest
       x = []
       loader.on_load('A') { x << 1 }
       loader.on_load('B') { x << 2 }
-      loader.on_load('A') { x << 3 }
-      loader.on_load('B') { x << 4 }
+      loader.on_load('::A') { x << 3 }
+      loader.on_load('::B') { x << 4 }
 
       assert A
       assert B
