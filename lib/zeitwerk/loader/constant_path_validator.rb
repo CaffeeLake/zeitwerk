@@ -8,7 +8,10 @@ class Zeitwerk::Loader::ConstantPathValidator # :nodoc
   #
   #: (String) -> String ! NameError
   def validate!(possible_cpath)
+    # We do this before validating because as of this writing, TruffleRuby
+    # raises TypeError if the argument has leading colons.
+    possible_cpath = possible_cpath.delete_prefix('::')
     CNAME_VALIDATOR.const_defined?(possible_cpath, false)
-    possible_cpath.delete_prefix('::')
+    possible_cpath
   end
 end
