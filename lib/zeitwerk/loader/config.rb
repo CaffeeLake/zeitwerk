@@ -7,6 +7,9 @@ module Zeitwerk::Loader::Config
   extend Zeitwerk::Internal
   include Zeitwerk::RealModName
 
+  UNDEFINED = Object.new.freeze
+  private_constant :UNDEFINED
+
   #: camelize(String, String) -> String
   attr_accessor :inflector
 
@@ -276,18 +279,19 @@ module Zeitwerk::Loader::Config
   #     # ...
   #   end
   #
-  #: (String?) { (top, String) -> void } -> void ! TypeError
-  def on_load(cpath = :ANY, &block)
-    case cpath
-    when String
-      cpath = cpath.delete_prefix('::')
-    when :ANY
-    else
+  #: (String) { (top, String) -> void } -> void ! TypeError
+  #| { (String, top, String) -> void } -> void ! TypeError
+  def on_load(cpath = UNDEFINED, &block)
+    key = if cpath.equal?(UNDEFINED)
+      :ANY
+    elsif !cpath.is_a?(String)
       raise TypeError, 'on_load only accepts strings'
+    else
+      cpath.delete_prefix('::')
     end
 
     mutex.synchronize do
-      (on_load_callbacks[cpath] ||= []) << block
+      (on_load_callbacks[key] ||= []) << block
     end
   end
 
@@ -305,12 +309,19 @@ module Zeitwerk::Loader::Config
   #     # ...
   #   end
   #
-  #: (String?) { (top, String) -> void } -> void ! TypeError
-  def on_unload(cpath = :ANY, &block)
-    raise TypeError, 'on_unload only accepts strings' unless cpath.is_a?(String) || cpath == :ANY
+  #: (String) { (top, String) -> void } -> void ! TypeError
+  #| { (String, top, String) -> void } -> void ! TypeError
+  def on_unload(cpath = UNDEFINED, &block)
+    key = if cpath.equal?(UNDEFINED)
+      :ANY
+    elsif !cpath.is_a?(String)
+      raise TypeError, 'on_unload only accepts strings'
+    else
+      cpath.delete_prefix('::')
+    end
 
     mutex.synchronize do
-      (on_unload_callbacks[cpath] ||= []) << block
+      (on_unload_callbacks[key] ||= []) << block
     end
   end
 
