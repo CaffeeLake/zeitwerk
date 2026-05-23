@@ -10,6 +10,7 @@ module Zeitwerk
     require_relative 'loader/config'
     require_relative 'loader/eager_load'
     require_relative 'loader/file_system'
+    require_relative 'loader/constant_path_validator'
 
     extend Internal
 
@@ -115,6 +116,7 @@ module Zeitwerk
       @setup           = false
       @eager_loaded    = false
       @fs              = FileSystem.new(self)
+      @cpv             = ConstantPathValidator.new
 
       @mutex = Mutex.new
       @dirs_autoload_monitor = Monitor.new

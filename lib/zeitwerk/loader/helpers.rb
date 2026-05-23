@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 module Zeitwerk::Loader::Helpers
-  CNAME_VALIDATOR = Module.new #: Module
-  private_constant :CNAME_VALIDATOR
-
   #: (String, String) -> Symbol ! Zeitwerk::NameError
   private def cname_for(basename, abspath)
     cname = inflector.camelize(basename, abspath)
@@ -23,7 +20,7 @@ module Zeitwerk::Loader::Helpers
     end
 
     begin
-      CNAME_VALIDATOR.const_defined?(cname, false)
+      @cpv.validate!(cname)
     rescue ::NameError => error
       path_type = @fs.rb_extension?(abspath) ? 'file' : 'directory'
 
